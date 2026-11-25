@@ -218,12 +218,16 @@ async function doAuth(kind, nick, pass){
            res.error === 'net' ? 'Nelze se spojit, zkus to znovu' : 'Něco se pokazilo';
   }
   user = { nick: res.nick || nick, hash }; store.set('mazec_user', JSON.stringify(user)); loadProg(res.progress);
-  refreshLevels(); return null;
+  refreshLevels(); flushPending(); return null;
 }
 function cacheLevels(){ store.set('mazec_levels', JSON.stringify(customLevels)); }
 async function refreshLevels(){
   const res = await apiGet('action=levels');
-  if (res && res.ok){ customLevels = res.levels; cacheLevels(); }
+  if (res && res.ok){
+    const pend = user ? getPend() : [];       // levely, které se na server ještě nedostaly, nesmí zmizet
+    customLevels = res.levels.map(l => pend.find(p => p.id === l.id) || l).concat(pend.filter(p => !res.levels.some(l => l.id === p.id)));
+    cacheLevels();
+  }
 }
 async function silentLogin(){
   if (!user) return;
@@ -561,7 +565,7 @@ function levelsPanel(){
     const d = el('button', { className: 'btn sm', textContent: '🗑' }, it);
     d.onclick = async () => { if (!confirm('Smazat level „' + c.name + '"?')) return;
       await api({ action: 'deleteLevel', nick: user.nick, hash: user.hash, id: c.id });
-      customLevels = customLevels.filter(x => x.id !== c.id); cacheLevels(); levelsPanel(); };
+      customLevels = customLevels.filter(x => x.id !== c.id); cacheLevels(); setPend(getPend().filter(x => x.id !== c.id)); levelsPanel(); };
   });
   btn(p, 'Zpět', () => { closePanel(); paused = false; });
 }
@@ -582,7 +586,7 @@ function openEditor(c){
   el('button', { textContent: '◀' }, bar).onclick = sc(-300); el('button', { textContent: '▶' }, bar).onclick = sc(300);
   el('button', { className: 'wide', textContent: '▶ Zkusit' }, bar).onclick = startTest;
   el('button', { className: 'wide', textContent: '💾 Uložit' }, bar).onclick = trySave;
-  el('button', { className: 'wide', textContent: '✕' }, bar).onclick = () => { if (confirm('Zahodit úpravy?')) leaveEditor(); };
+  el('button', { className: 'wide', textContent: '✕' }, bar).onclick = () => { if (!ed.dirty || confirm('Neuložené změny se zahodí. Opravdu odejít?')) leaveEditor(); };
   setMode('edit'); paused = true; closePanel();
 }
 function leaveEditor(){ store.del(draftKey()); ed = null; setMode('menu'); startPanel(); }
@@ -596,7 +600,7 @@ function edPaintRaw(sx, sy){
   const gx = Math.floor((sx + ed.cam) / TILE), gy = Math.floor(sy / TILE);
   if (gx < 0 || gx >= ED_COLS || gy < 2 || gy >= ED_ROWS) return;
   if (isStartCell(gx, gy)){ toast('Tady začíná panáček 🧍 – tohle místo se nemění', 1.5); return; }
-  ed.tested = false; const t = ed.tool;
+  ed.tested = false; ed.dirty = true; const t = ed.tool;
   ed.objs = ed.objs.filter(o => !(o[1] === gx && o[2] === gy));
   if (t === 'X'){ ed.map[gy][gx] = '.'; return; }
   if ('GWF'.includes(t)){ ed.map[gy][gx] = t; return; }
@@ -620,17 +624,35 @@ function trySave(){
   n.onkeydown = e => { if (e.key === 'Enter') { ed.name = n.value.trim() || 'Můj level'; saveCustom(); } };
   n.focus();
 }
-async function saveCustom(){
+// uložení levelu: hned se zavře editor, na server se posílá potichu na pozadí (a opakuje, dokud to nevyjde)
+const pendKey = () => 'mazec_pending_' + (user ? user.nick : '');
+const getPend = () => { try{ return JSON.parse(store.get(pendKey())) || []; }catch(e){ return []; } };
+const setPend = a => store.set(pendKey(), JSON.stringify(a));
+let flushing = false;
+async function flushPending(){
+  if (!user || flushing || !getPend().length) return;
+  flushing = true;
+  for (const p of getPend()){
+    const res = await api({ action: 'saveLevel', nick: user.nick, hash: user.hash, level: p });
+    if (res === null || (res.ok === false && ['level', 'limit', 'bad'].includes(res.error))){ setPend(getPend().filter(x => x.id !== p.id)); continue; }   // bez serveru / nelze uložit
+    if (res.ok){
+      setPend(getPend().filter(x => x.id !== p.id));
+      if (res.id !== p.id) customLevels.forEach(c => { if (c.id === p.id){ c.id = res.id; delete c._def; } });
+      cacheLevels();
+    }
+  }
+  flushing = false; refreshLevels();
+}
+setInterval(flushPending, 30000); addEventListener('online', flushPending);
+function saveCustom(){
   const data = edData(); closePanel();
-  const res = await api({ action: 'saveLevel', nick: user.nick, hash: user.hash, level: data });
-  if (res === null) data.id = data.id || ('l' + Date.now());
-  else if (res.ok) data.id = res.id;
-  else { toast('Uložení se nepovedlo, zkus to znovu', 2.5); return; }
+  data.id = data.id || ('l' + Date.now() + Math.random().toString(36).slice(2, 6));
   data.created = data.created || Date.now();
   const i = customLevels.findIndex(c => c.id === data.id); if (i >= 0) customLevels[i] = data; else customLevels.push(data);
-  cacheLevels(); store.del(draftKey()); ed = null; setMode('menu'); hearts = 10;
+  cacheLevels(); setPend(getPend().filter(x => x.id !== data.id).concat([data]));
+  store.del(draftKey()); ed = null; setMode('menu'); hearts = 10;
   panel('<h1>💾 Uloženo</h1><p>Tvůj level je ve hře.</p>', [{ label: 'OK', fn: () => playLevel(prog.reached) }]);
-  refreshLevels();
+  flushPending();
 }
 function edScroll(dt){
   const d = (K.ArrowRight || K.KeyD ? 1 : 0) - (K.ArrowLeft || K.KeyA ? 1 : 0);
@@ -1047,7 +1069,7 @@ function loop(now){
   }
   requestAnimationFrame(loop);
 }
-fit(); startPanel(); silentLogin(); requestAnimationFrame(loop);
+fit(); startPanel(); silentLogin().then(flushPending); requestAnimationFrame(loop);
 </script>
 </body>
 </html>
