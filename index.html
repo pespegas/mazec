@@ -366,7 +366,9 @@ const BUILTIN = [
 
 // ---------- vlastní levely (z editoru) ----------
 function buildFromData(c){
-  const rows = c.map;
+  const rows = c.map.map(r => r.split(''));
+  for (let gy = 11; gy < rows.length; gy++) for (const gx of [1, 2]) rows[gy][gx] = gy >= 13 ? 'G' : '.';   // místo pro start
+  c = Object.assign({}, c, { objs: c.objs.filter(o => !isStartCell(o[1], o[2])) });
   for (let gy = 0; gy < rows.length; gy++) for (let gx = 0; gx < rows[gy].length; gx++){
     const ch = rows[gy][gx];
     if (ch === 'G') fill(gx * TILE, gy * TILE, TILE, TILE, 1); else if (ch === 'W') fill(gx * TILE, gy * TILE, TILE, TILE, 3);
@@ -582,9 +584,11 @@ function openEditor(c){
   setMode('edit'); paused = true; closePanel();
 }
 function leaveEditor(){ ed = null; setMode('menu'); startPanel(); }
+const isStartCell = (gx, gy) => (gx === 1 || gx === 2) && gy >= 11;      // jen tam, kde stojí panáček
 function edPaint(sx, sy){
   const gx = Math.floor((sx + ed.cam) / TILE), gy = Math.floor(sy / TILE);
-  if (gx < 4 || gx >= ED_COLS || gy < 2 || gy >= ED_ROWS) return;      // začátek (4 políčka) zůstává pevný
+  if (gx < 0 || gx >= ED_COLS || gy < 2 || gy >= ED_ROWS) return;
+  if (isStartCell(gx, gy)){ toast('Tady začíná panáček 🧍 – tohle místo se nemění', 1.5); return; }
   ed.tested = false; const t = ed.tool;
   ed.objs = ed.objs.filter(o => !(o[1] === gx && o[2] === gy));
   if (t === 'X'){ ed.map[gy][gx] = '.'; return; }
@@ -640,11 +644,13 @@ function renderEditor(){
   ctx.font = '22px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   const IC = { E: '👾', S: '🔺', B: '💣', K: '🔑', H: '❤️', O: '🧽', D: '🚪' };
   for (const [t, gx, gy] of ed.objs) ctx.fillText(IC[t], gx * TILE - ox + TILE / 2, gy * TILE + TILE / 2 + 1);
-  ctx.fillText('🧍', 60 - ox, 13 * TILE - 14);                     // kde začíná hráč
+  ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = '#ffd23a'; ctx.lineWidth = 2;   // kde začíná hráč (pevné místo)
+  ctx.strokeRect(1 * TILE - ox + 1, 11 * TILE + 1, 2 * TILE - 2, 2 * TILE - 2); ctx.restore();
+  ctx.fillText('🧍', 60 - ox, 13 * TILE - 14);
   if (cur && mouseIn){                                       // kurzor: ukáže, co se na políčko položí
     const gx = Math.floor((cur.x + ed.cam) / TILE), gy = Math.floor(cur.y / TILE);
     if (gy >= 2 && gy < ED_ROWS && gx >= 0 && gx < ED_COLS){
-      const x = gx * TILE - ox, y = gy * TILE, t = ed.tool, locked = gx < 4;
+      const x = gx * TILE - ox, y = gy * TILE, t = ed.tool, locked = isStartCell(gx, gy);
       ctx.globalAlpha = .6;
       if ('GWF'.includes(t)){ ctx.fillStyle = t === 'G' ? '#8d5b2e' : t === 'W' ? '#9ca7b3' : '#f0a53a'; ctx.fillRect(x, y, TILE, TILE); }
       else if (t === 'X'){ ctx.fillStyle = '#e0455a'; ctx.fillRect(x, y, TILE, TILE); }
