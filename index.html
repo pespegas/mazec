@@ -38,6 +38,15 @@
        text-align:center;outline:none;user-select:text;-webkit-user-select:text}
   #panel input:focus{border-color:#f2638f}
   #panel input::placeholder{color:#ffffff88}
+  #panel .tabs{display:flex;gap:calc(4*var(--u));margin-bottom:calc(8*var(--u))}
+  #panel .tabs button{background:#ffffff14;border:0;color:#fffb;padding:calc(7*var(--u)) calc(18*var(--u));cursor:pointer;
+       border-radius:calc(10*var(--u));font-size:max(12px,calc(15*var(--u)));font-weight:700}
+  #panel .tabs button.on{background:#f2638f;color:#fff}
+  #panel .hint{font-size:max(10px,calc(13*var(--u)));opacity:.85;margin-bottom:calc(6*var(--u))}
+  .spin{display:inline-block;width:.9em;height:.9em;margin-right:.5em;vertical-align:-.1em;border:2px solid #fff6;border-top-color:#fff;
+        border-radius:50%;animation:sp .7s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .btn:disabled{opacity:.85;cursor:default}
   #panel .err{color:#ff9a9a;font-size:max(10px,calc(13*var(--u)));min-height:1.2em}
   #panel .row{display:flex;flex-wrap:wrap;justify-content:center;gap:calc(4*var(--u))}
   #panel .item{display:flex;align-items:center;gap:calc(6*var(--u));margin:calc(3*var(--u))}
@@ -124,6 +133,11 @@ if (matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window) document
 
 $('rotBtn').onclick = () => $('rot').style.setProperty('display', 'none', 'important');
 
+// při zavírání záložky: upozornit, když je v editoru neuložená práce nebo se level ještě odesílá na server
+addEventListener('beforeunload', e => {
+  if ((mode === 'edit' && ed && ed.dirty) || (user && getPend().length)){ e.preventDefault(); e.returnValue = ''; }
+});
+
 // ---------- zvuk a hudba ----------
 let ac, muted = store.get('mazec_mute') === '1', musicTimer = null, mstep = 0;
 function audio(){ try{ ac = ac || new AudioContext(); if (ac.state === 'suspended') ac.resume(); }catch(e){} }
@@ -192,7 +206,7 @@ function loadProg(serverProg){
   const sp = serverProg || {}, best = {};
   for (const src of [loc.best || {}, sp.best || {}]) for (const k in src) best[k] = best[k] ? Math.min(best[k], src[k]) : src[k];
   const def = { shirt: '#2f7bf5', pants: '#20304f', hat: null, hair: '#6b3f20', skin: '#f2b27c' };
-  prog = { best, reached: Math.max(1, loc.reached || 1, sp.reached || 1), char: Object.assign(def, loc.char, sp.char) };
+  prog = { best, reached: Math.max(1, loc.reached || 1, sp.reached || 1), char: Object.assign(def, loc.char, sp.char), realName: sp.realName || loc.realName || '' };
   saveProg();
 }
 let syncT;
@@ -202,12 +216,13 @@ function saveProg(){
   clearTimeout(syncT);
   syncT = setTimeout(() => api({ action: 'save', nick: user.nick, hash: user.hash, progress: prog }), 800);
 }
-async function doAuth(kind, nick, pass){
-  nick = nick.trim();
+async function doAuth(kind, nick, pass, name){
+  nick = nick.trim(); name = (name || '').trim().replace(/\s+/g, ' ');
+  if (kind === 'register' && !/\p{L}{2,}/u.test(name)) return 'Napiš své skutečné jméno';
   if (!NICK_RE.test(nick)) return 'Přezdívka: 3–16 znaků, bez mezer';
   if (pass.length < 4) return 'Heslo: aspoň 4 znaky';
   const hash = await sha('mazec:' + nick.toLowerCase() + ':' + pass);
-  let res = await api({ action: kind, nick, hash });
+  let res = await api({ action: kind, nick, hash, name: name.slice(0, 60) });
   if (res === null){            // bez serveru – účet jen v tomto prohlížeči
     const users = JSON.parse(store.get('mazec_users') || '{}'), k = nick.toLowerCase();
     if (kind === 'register'){ if (users[k]) return 'Přezdívka už existuje'; users[k] = hash; store.set('mazec_users', JSON.stringify(users)); }
@@ -218,6 +233,8 @@ async function doAuth(kind, nick, pass){
            res.error === 'net' ? 'Nelze se spojit, zkus to znovu' : 'Něco se pokazilo';
   }
   user = { nick: res.nick || nick, hash }; store.set('mazec_user', JSON.stringify(user)); loadProg(res.progress);
+  store.set('mazec_seen', '1');
+  if (kind === 'register' && name){ prog.realName = name; saveProg(); }
   refreshLevels(); flushPending(); return null;
 }
 function cacheLevels(){ store.set('mazec_levels', JSON.stringify(customLevels)); }
@@ -507,19 +524,30 @@ function startPanel(){
     const p = $('panel'); const o = el('button', { className: 'btn alt sm', textContent: 'Odhlásit' }, p); o.style.marginTop = '10px'; o.onclick = logout;
   } else authPanel();
 }
-function authPanel(){
+function authPanel(tab = store.get('mazec_seen') ? 'login' : 'register', keep = {}){     // poprvé „Registrovat se", pak už „Přihlásit se"
   panel(LOGO + '<div class="sub">Vymaž svět. Přežij.</div>');
-  const p = $('panel');
-  const n = el('input', { placeholder: 'přezdívka', maxLength: 16, autocomplete: 'username' }, p);
-  const w = el('input', { placeholder: 'heslo', type: 'password', autocomplete: 'current-password' }, p);
-  const err = el('div', { className: 'err' }, p), row = el('div', { className: 'row' }, p);
-  let busy = false;
-  const go = async kind => { if (busy) return; busy = true; err.textContent = '';
-    const e = await doAuth(kind, n.value, w.value); busy = false;
-    if (e) err.textContent = e; else startPanel(); };
-  btn(row, 'Přihlásit', () => go('login')); btn(row, 'Registrovat', () => go('register'), true);
-  n.onkeydown = e => { if (e.key === 'Enter') w.focus(); };
-  w.onkeydown = e => { if (e.key === 'Enter') go('login'); };
+  const p = $('panel'), reg = tab === 'register';
+  const tabs = el('div', { className: 'tabs' }, p);
+  [['login', 'Přihlásit se'], ['register', 'Registrovat se']].forEach(([k, label]) => {
+    const b = el('button', { textContent: label, className: k === tab ? 'on' : '' }, tabs);
+    b.onclick = () => authPanel(k, { name: f.name && f.name.value, nick: f.nick.value, pass: f.pass.value });
+  });
+  el('div', { className: 'hint', textContent: reg ? 'Jsi tu poprvé? Založ si účet.' : 'Už máš účet? Přihlas se a pokračuj ve svém postupu.' }, p);
+  const f = {};
+  if (reg) f.name = el('input', { placeholder: 'skutečné jméno', maxLength: 60, autocomplete: 'name', value: keep.name || '' }, p);
+  f.nick = el('input', { placeholder: 'přezdívka', maxLength: 16, autocomplete: 'username', value: keep.nick || '' }, p);
+  f.pass = el('input', { placeholder: 'heslo', type: 'password', autocomplete: reg ? 'new-password' : 'current-password', value: keep.pass || '' }, p);
+  const err = el('div', { className: 'err' }, p);
+  const label = reg ? 'Zaregistrovat se' : 'Přihlásit se', busyLabel = reg ? 'Registruji…' : 'Přihlašuji…';
+  const go = el('button', { className: 'btn', textContent: label }, p);
+  const submit = async () => {
+    if (go.disabled) return; err.textContent = ''; go.disabled = true; go.innerHTML = '<span class="spin"></span>' + busyLabel;
+    const e = await doAuth(tab, f.nick.value, f.pass.value, f.name && f.name.value);
+    if (e){ err.textContent = e; go.disabled = false; go.textContent = label; } else startPanel();
+  };
+  go.onclick = submit;
+  const fields = Object.values(f);
+  fields.forEach((inp, i) => inp.onkeydown = e => { if (e.key === 'Enter'){ if (i < fields.length - 1) fields[i + 1].focus(); else submit(); } });
 }
 function logout(){ user = null; store.del('mazec_user'); g = null; P = null; startPanel(); }
 
