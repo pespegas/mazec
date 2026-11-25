@@ -79,7 +79,7 @@
 </style>
 </head>
 <body>
-<div id="rot">📱↻<br>Otoč telefon naležato</div>
+<div id="rot"><div>📱↻<br>Otoč telefon naležato<br><br><button class="btn" id="rotBtn" style="font-size:16px;padding:10px 20px">Chci hrát i tak!</button></div></div>
 <div id="wrap">
   <canvas id="c" width="900" height="450"></canvas>
   <div id="hud">
@@ -121,6 +121,8 @@ const esc = s => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;'
 function fit(){ wrap.style.setProperty('--u', (wrap.clientWidth / VW) + 'px'); }
 addEventListener('resize', fit); fit();
 if (matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window) document.body.classList.add('touch');
+
+$('rotBtn').onclick = () => $('rot').style.setProperty('display', 'none', 'important');
 
 // ---------- zvuk a hudba ----------
 let ac, muted = store.get('mazec_mute') === '1', musicTimer = null, mstep = 0;
@@ -639,8 +641,17 @@ function renderEditor(){
   const IC = { E: '👾', S: '🔺', B: '💣', K: '🔑', H: '❤️', O: '🧽', D: '🚪' };
   for (const [t, gx, gy] of ed.objs) ctx.fillText(IC[t], gx * TILE - ox + TILE / 2, gy * TILE + TILE / 2 + 1);
   ctx.fillText('🧍', 60 - ox, 13 * TILE - 14);                     // kde začíná hráč
-  if (cur && mouseIn){ const gx = Math.floor((cur.x + ed.cam) / TILE), gy = Math.floor(cur.y / TILE);
-    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.strokeRect(gx * TILE - ox + 1, gy * TILE + 1, TILE - 2, TILE - 2); }
+  if (cur && mouseIn){                                       // kurzor: ukáže, co se na políčko položí
+    const gx = Math.floor((cur.x + ed.cam) / TILE), gy = Math.floor(cur.y / TILE);
+    if (gy >= 2 && gy < ED_ROWS && gx >= 0 && gx < ED_COLS){
+      const x = gx * TILE - ox, y = gy * TILE, t = ed.tool, locked = gx < 4;
+      ctx.globalAlpha = .6;
+      if ('GWF'.includes(t)){ ctx.fillStyle = t === 'G' ? '#8d5b2e' : t === 'W' ? '#9ca7b3' : '#f0a53a'; ctx.fillRect(x, y, TILE, TILE); }
+      else if (t === 'X'){ ctx.fillStyle = '#e0455a'; ctx.fillRect(x, y, TILE, TILE); }
+      else ctx.fillText(IC[t], x + TILE / 2, y + TILE / 2 + 1);
+      ctx.globalAlpha = 1; ctx.strokeStyle = locked ? '#ff6b6b' : '#fff'; ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 1, TILE - 2, TILE - 2);
+    }
+  }
   ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
 }
 
