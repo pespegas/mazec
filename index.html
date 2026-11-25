@@ -641,8 +641,9 @@ function renderEditor(){
   const c0 = Math.floor(ed.cam / TILE), c1 = Math.min(ED_COLS - 1, c0 + 31), ox = ed.cam;
   for (let gy = 0; gy < ED_ROWS; gy++) for (let gx = c0; gx <= c1; gx++){
     const ch = ed.map[gy][gx]; if (ch === '.') continue;
-    ctx.fillStyle = ch === 'G' ? (gy > 0 && ed.map[gy - 1][gx] === '.' ? '#58b947' : '#8d5b2e') : ch === 'W' ? '#9ca7b3' : '#f0a53a';
+    ctx.fillStyle = ch === 'G' ? '#8d5b2e' : ch === 'W' ? '#9ca7b3' : '#f0a53a';          // blok je vždy hnědý…
     ctx.fillRect(gx * TILE - ox, gy * TILE, TILE, TILE);
+    if (ch === 'G' && (gy === 0 || ed.map[gy - 1][gx] === '.')){ ctx.fillStyle = '#58b947'; ctx.fillRect(gx * TILE - ox, gy * TILE, TILE, 6); }   // …jen s tenkým pruhem trávy navrchu (stejně jako ve hře)
     ctx.strokeStyle = '#0003'; ctx.strokeRect(gx * TILE - ox + .5, gy * TILE + .5, TILE - 1, TILE - 1);
   }
   ctx.strokeStyle = '#ffffff22'; ctx.lineWidth = 1;
@@ -659,7 +660,8 @@ function renderEditor(){
     if (gy >= 2 && gy < ED_ROWS && gx >= 0 && gx < ED_COLS){
       const x = gx * TILE - ox, y = gy * TILE, t = ed.tool, locked = isStartCell(gx, gy);
       ctx.globalAlpha = .6;
-      if ('GWF'.includes(t)){ ctx.fillStyle = t === 'G' ? '#8d5b2e' : t === 'W' ? '#9ca7b3' : '#f0a53a'; ctx.fillRect(x, y, TILE, TILE); }
+      if ('GWF'.includes(t)){ ctx.fillStyle = t === 'G' ? '#8d5b2e' : t === 'W' ? '#9ca7b3' : '#f0a53a'; ctx.fillRect(x, y, TILE, TILE);
+        if (t === 'G'){ ctx.fillStyle = '#58b947'; ctx.fillRect(x, y, TILE, 6); } }
       else if (t === 'X'){ ctx.fillStyle = '#e0455a'; ctx.fillRect(x, y, TILE, TILE); }
       else ctx.fillText(IC[t], x + TILE / 2, y + TILE / 2 + 1);
       ctx.globalAlpha = 1; ctx.strokeStyle = locked ? '#ff6b6b' : '#fff'; ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 1, TILE - 2, TILE - 2);
