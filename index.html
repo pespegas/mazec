@@ -9,29 +9,65 @@
             display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none;touch-action:none}
   #wrap{position:relative;width:min(100vw,200vh);aspect-ratio:2/1;background:#000;overflow:hidden;--u:1px}
   canvas{position:absolute;inset:0;width:100%;height:100%;cursor:none;touch-action:none}
+  #wrap.editing canvas{cursor:crosshair}
   #hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;
-       padding:calc(8*var(--u)) calc(12*var(--u));color:#fff;font-weight:700;font-size:calc(17*var(--u));
+       padding:calc(6*var(--u)) calc(10*var(--u));color:#fff;font-weight:700;font-size:max(10px,calc(13*var(--u)));
        text-shadow:0 2px 3px #000a;pointer-events:none}
   #hud .mid{text-align:center}
-  #time{font-size:calc(26*var(--u))}
-  #gumrow{position:absolute;left:calc(12*var(--u));top:calc(40*var(--u));display:flex;align-items:center;gap:calc(8*var(--u));
-          color:#fff;font-weight:700;font-size:calc(15*var(--u));text-shadow:0 2px 3px #000a;pointer-events:none}
-  #gumbar{width:calc(180*var(--u));height:calc(14*var(--u));background:#0006;border:2px solid #fff9;border-radius:99px;overflow:hidden}
+  #hud .right{display:flex;align-items:center;gap:calc(8*var(--u))}
+  #menuBtn{pointer-events:auto;background:#0008;color:#fff;border:1.5px solid #fff8;border-radius:calc(8*var(--u));
+           width:calc(30*var(--u));height:calc(26*var(--u));min-width:24px;font-size:max(13px,calc(16*var(--u)));cursor:pointer;padding:0}
+  #time{font-size:max(12px,calc(18*var(--u)))}
+  #gumrow{position:absolute;left:calc(10*var(--u));top:calc(30*var(--u));display:flex;align-items:center;gap:calc(6*var(--u));
+          color:#fff;font-weight:700;font-size:max(9px,calc(12*var(--u)));text-shadow:0 2px 3px #000a;pointer-events:none}
+  #gumbar{width:calc(140*var(--u));height:calc(10*var(--u));background:#0006;border:1.5px solid #fff9;border-radius:99px;overflow:hidden}
   #gumfill{display:block;height:100%;background:linear-gradient(#ff9ec0,#f2638f);width:100%}
-  #toast{position:absolute;left:50%;top:22%;transform:translateX(-50%);padding:calc(8*var(--u)) calc(20*var(--u));
-         background:#000a;color:#fff;border-radius:calc(12*var(--u));font-size:calc(22*var(--u));font-weight:700;
-         text-align:center;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap}
-  #panel{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
-         background:rgba(10,14,30,.82);color:#fff;text-align:center;padding:calc(20*var(--u));box-sizing:border-box}
-  #panel h1{font-size:calc(52*var(--u));margin:0 0 calc(8*var(--u));letter-spacing:2px}
-  #panel p{font-size:calc(18*var(--u));line-height:1.5;margin:calc(4*var(--u)) 0;max-width:calc(760*var(--u))}
-  .btn{background:#f2638f;color:#fff;border:0;border-radius:calc(14*var(--u));padding:calc(12*var(--u)) calc(28*var(--u));
-       font-size:calc(22*var(--u));font-weight:700;cursor:pointer;margin:calc(8*var(--u));box-shadow:0 4px 0 #a73a60}
-  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a73a60}
-  .lv{display:inline-block;width:calc(40*var(--u));height:calc(40*var(--u));line-height:calc(40*var(--u));margin:calc(3*var(--u));
-      border-radius:50%;background:#2f7bf5;color:#fff;font-weight:700;cursor:pointer;font-size:calc(18*var(--u))}
+  #toast{position:absolute;left:50%;top:16%;transform:translateX(-50%);padding:calc(6*var(--u)) calc(14*var(--u));
+         background:#000a;color:#fff;border-radius:calc(10*var(--u));font-size:max(10px,calc(14*var(--u)));font-weight:700;
+         text-align:center;opacity:0;transition:opacity .25s;pointer-events:none;width:max-content;max-width:78%;line-height:1.35;z-index:3}
+  #panel{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:6;
+         background:rgba(10,14,30,.86);color:#fff;text-align:center;padding:calc(16*var(--u));box-sizing:border-box;overflow:auto}
+  #panel h1{font-size:max(16px,calc(28*var(--u)));margin:0 0 calc(6*var(--u))}
+  #panel p{font-size:max(11px,calc(15*var(--u)));line-height:1.4;margin:calc(4*var(--u)) 0;max-width:80%}
+  #panel .logo{font-size:max(34px,calc(80*var(--u)));font-weight:900;letter-spacing:.06em;line-height:1;
+       background:linear-gradient(#ffd0e1,#f2638f);-webkit-background-clip:text;background-clip:text;color:transparent;
+       filter:drop-shadow(0 4px 0 #7a2147)}
+  #panel .sub{font-size:max(12px,calc(19*var(--u)));opacity:.9;margin:calc(6*var(--u)) 0 calc(12*var(--u))}
+  #panel input{width:calc(250*var(--u));min-width:150px;box-sizing:border-box;margin:calc(4*var(--u));padding:calc(7*var(--u)) calc(12*var(--u));
+       border-radius:calc(10*var(--u));border:2px solid #ffffff55;background:#ffffff18;color:#fff;font-size:max(12px,calc(16*var(--u)));
+       text-align:center;outline:none;user-select:text;-webkit-user-select:text}
+  #panel input:focus{border-color:#f2638f}
+  #panel input::placeholder{color:#ffffff88}
+  #panel .err{color:#ff9a9a;font-size:max(10px,calc(13*var(--u)));min-height:1.2em}
+  #panel .row{display:flex;flex-wrap:wrap;justify-content:center;gap:calc(4*var(--u))}
+  #panel .item{display:flex;align-items:center;gap:calc(6*var(--u));margin:calc(3*var(--u))}
+  #panel .sw{display:inline-block;width:calc(26*var(--u));height:calc(26*var(--u));min-width:20px;min-height:20px;border-radius:50%;
+       border:3px solid #fff3;margin:calc(3*var(--u));cursor:pointer}
+  #panel .sw.on{border-color:#fff}
+  #panel .lab{font-size:max(10px,calc(13*var(--u)));opacity:.8;margin-top:calc(6*var(--u))}
+  .btn{background:#f2638f;color:#fff;border:0;border-radius:calc(12*var(--u));padding:calc(8*var(--u)) calc(20*var(--u));
+       font-size:max(12px,calc(16*var(--u)));font-weight:700;cursor:pointer;margin:calc(5*var(--u));box-shadow:0 3px 0 #a73a60}
+  .btn.alt{background:#2f7bf5;box-shadow:0 3px 0 #1c4aa0}
+  .btn.sm{padding:calc(4*var(--u)) calc(10*var(--u));font-size:max(10px,calc(12*var(--u)));margin:0;box-shadow:0 2px 0 #a73a60}
+  .btn:active{transform:translateY(2px);box-shadow:none}
+  #menu{position:absolute;right:calc(8*var(--u));top:calc(36*var(--u));display:none;flex-direction:column;z-index:5;
+        background:#10162af0;border:1.5px solid #fff4;border-radius:calc(10*var(--u));padding:calc(4*var(--u))}
+  #menu button{background:none;color:#fff;border:0;text-align:left;padding:calc(7*var(--u)) calc(14*var(--u));cursor:pointer;
+        font-size:max(11px,calc(14*var(--u)));font-weight:600;border-radius:calc(8*var(--u));white-space:nowrap}
+  #menu button:hover{background:#ffffff22}
+  #editor{position:absolute;left:0;right:0;top:0;height:calc(54*var(--u));min-height:34px;display:none;align-items:center;gap:calc(4*var(--u));
+          background:#0b1020e6;padding:0 calc(8*var(--u));z-index:4;overflow-x:auto;box-sizing:border-box}
+  #editor button{flex:none;width:calc(38*var(--u));height:calc(38*var(--u));min-width:28px;min-height:28px;border-radius:calc(8*var(--u));
+        border:2px solid #fff3;background:#ffffff14;font-size:max(14px,calc(20*var(--u)));cursor:pointer;color:#fff;padding:0}
+  #editor button.on{border-color:#f2638f;background:#f2638f44}
+  #editor .sep{flex:1}
+  #editor button.wide{width:auto;padding:0 calc(10*var(--u));font-size:max(11px,calc(14*var(--u)));font-weight:700}
+  #rot{display:none;position:fixed;inset:0;background:#10131c;color:#fff;z-index:9;align-items:center;justify-content:center;
+       text-align:center;font-size:20px;padding:30px}
+  @media (orientation:portrait) and (pointer:coarse){ #rot{display:flex} }
   #touch{display:none}
   .touch #touch{display:block}
+  .editing #touch{display:none !important}
   #joy{position:absolute;left:calc(20*var(--u));bottom:calc(20*var(--u));width:calc(150*var(--u));height:calc(110*var(--u));
        border-radius:calc(60*var(--u));background:#ffffff22;border:2px solid #fff6;touch-action:none}
   #knob{position:absolute;left:50%;top:50%;width:calc(54*var(--u));height:calc(54*var(--u));margin:calc(-27*var(--u));
@@ -43,12 +79,13 @@
 </style>
 </head>
 <body>
+<div id="rot">📱↻<br>Otoč telefon naležato</div>
 <div id="wrap">
   <canvas id="c" width="900" height="450"></canvas>
   <div id="hud">
     <div id="hearts"></div>
     <div class="mid"><div id="lvl"></div><div id="time"></div></div>
-    <div id="keysH"></div>
+    <div class="right"><span id="keysH"></span><button id="menuBtn">☰</button></div>
   </div>
   <div id="gumrow"><span>🧽</span><div id="gumbar"><i id="gumfill"></i></div><span id="gumtxt"></span></div>
   <div id="toast"></div>
@@ -57,6 +94,8 @@
     <div class="tb" id="bLeap">⤴</div>
     <div class="tb" id="bJump">↑</div>
   </div>
+  <div id="menu"></div>
+  <div id="editor"></div>
   <div id="panel"></div>
 </div>
 
@@ -64,28 +103,138 @@
 // =====================================================================
 //  MAZEC – hra o mazání světa
 // =====================================================================
-const VW = 900, VH = 450, C = 6, ROWS = VH / C, GT = 390;       // GT = výška podlahy
-const R = 20, COST = 0.07, GUM_MAX = 500;                        // R = velikost gumy
+const API_URL = 'https://script.google.com/macros/s/AKfycbxsFob2Ml4kJl5hlpYG_KO0ith_hgjoo9NiEAr1V3sU6O3R9xAD_Sn8rrlMY67VOFtV/exec';   // ← sem se vloží adresa serveru (Google Apps Script). Prázdné = vše jen v tomto prohlížeči.
+
+const mem = {};
+const store = {
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return k in mem ? mem[k] : null; } },
+  set(k, v){ try{ localStorage.setItem(k, v); }catch(e){ mem[k] = String(v); } },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){ delete mem[k]; } }
+};
+
+const VW = 900, VH = 450, C = 6, ROWS = VH / C, GT = 390, TILE = 30, ED_COLS = 80, ED_ROWS = 15;
+const R = 20, COST = 0.14, GUM_MAX = 100;
 const $ = id => document.getElementById(id);
 const cv = $('c'), ctx = cv.getContext('2d'), wrap = $('wrap');
+const esc = s => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
 
 function fit(){ wrap.style.setProperty('--u', (wrap.clientWidth / VW) + 'px'); }
 addEventListener('resize', fit); fit();
 if (matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window) document.body.classList.add('touch');
 
-// ---------- zvuky (jednoduché pípání) ----------
-let ac;
+// ---------- zvuk a hudba ----------
+let ac, muted = store.get('mazec_mute') === '1', musicTimer = null, mstep = 0;
+function audio(){ try{ ac = ac || new AudioContext(); if (ac.state === 'suspended') ac.resume(); }catch(e){} }
 function sfx(f, d = .1, type = 'square', v = .04){
-  try{ ac = ac || new AudioContext(); const o = ac.createOscillator(), g = ac.createGain();
+  if (muted) return;
+  try{ audio(); const o = ac.createOscillator(), g = ac.createGain();
     o.type = type; o.frequency.value = f; g.gain.setValueAtTime(v, ac.currentTime);
     g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + d);
     o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + d); }catch(e){}
 }
+const MEL = [0,2,4,7,9,7,4,2, 0,2,4,7,12,9,7,4, -3,0,2,4,7,4,2,0, 0,4,7,4,2,-1,0,null];
+function startMusic(){
+  if (musicTimer) return; audio();
+  musicTimer = setInterval(() => {
+    if (muted || document.hidden) return;
+    const n = MEL[mstep % MEL.length];
+    if (n !== null) sfx(261.63 * Math.pow(2, n / 12), .26, 'triangle', .02);
+    if (mstep % 4 === 0) sfx(130.8 * Math.pow(2, [0, 0, -3, 0][(mstep >> 3) % 4] / 12), .5, 'sine', .035);
+    mstep++;
+  }, 230);
+}
+function toggleMute(){ muted = !muted; store.set('mazec_mute', muted ? '1' : '0'); if (!muted) startMusic(); }
+
+// ---------- účet, postup a server (potichu na pozadí) ----------
+let user = null, prog = { best: {}, reached: 1, char: { shirt: '#2f7bf5', pants: '#20304f', hat: null, hair: '#6b3f20', skin: '#f2b27c' } };
+let customLevels = [];
+try{ user = JSON.parse(store.get('mazec_user')); }catch(e){}
+try{ customLevels = JSON.parse(store.get('mazec_levels')) || []; }catch(e){}
+
+async function api(body){
+  if (!API_URL) return null;
+  try{ const r = await fetch(API_URL, { method: 'POST', body: JSON.stringify(body) }); return await r.json(); }
+  catch(e){ return { ok: false, error: 'net' }; }
+}
+async function apiGet(q){
+  if (!API_URL) return null;
+  try{ const r = await fetch(API_URL + '?' + q); return await r.json(); }catch(e){ return null; }
+}
+function sha256js(str){      // záložní SHA-256 (stejný výsledek jako vestavěný)
+  const m = new TextEncoder().encode(str), l = m.length, k = [], h = [];
+  const rr = (x, n) => (x >>> n) | (x << (32 - n));
+  for (let c = 2, n = 0; n < 64; c++){ let p = true; for (let d = 2; d * d <= c; d++) if (c % d === 0){ p = false; break; }
+    if (p){ if (n < 8) h[n] = (Math.pow(c, .5) % 1) * 4294967296 | 0; k[n++] = (Math.cbrt(c) % 1) * 4294967296 | 0; } }
+  const bl = ((l + 8) >> 6) + 1, w = new Uint8Array(bl * 64); w.set(m); w[l] = 128;
+  const dv = new DataView(w.buffer); dv.setUint32(bl * 64 - 4, l * 8); dv.setUint32(bl * 64 - 8, Math.floor(l * 8 / 4294967296));
+  for (let o = 0; o < bl * 64; o += 64){
+    const x = new Array(64); for (let i = 0; i < 16; i++) x[i] = dv.getUint32(o + i * 4);
+    for (let i = 16; i < 64; i++){ const s0 = rr(x[i - 15], 7) ^ rr(x[i - 15], 18) ^ (x[i - 15] >>> 3), s1 = rr(x[i - 2], 17) ^ rr(x[i - 2], 19) ^ (x[i - 2] >>> 10); x[i] = (x[i - 16] + s0 + x[i - 7] + s1) | 0; }
+    let [a, b, c, d, e, f, g2, hh] = h;
+    for (let i = 0; i < 64; i++){
+      const t1 = (hh + (rr(e, 6) ^ rr(e, 11) ^ rr(e, 25)) + ((e & f) ^ (~e & g2)) + k[i] + x[i]) | 0, t2 = ((rr(a, 2) ^ rr(a, 13) ^ rr(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+      hh = g2; g2 = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+    }
+    [a, b, c, d, e, f, g2, hh].forEach((v, i) => h[i] = (h[i] + v) | 0);
+  }
+  return h.map(v => (v >>> 0).toString(16).padStart(8, '0')).join('');
+}
+async function sha(s){
+  try{ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
+  catch(e){ return sha256js(s); }
+}
+const NICK_RE = /^[A-Za-z0-9_áčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]{3,16}$/;
+
+function loadProg(serverProg){
+  let loc = {}; try{ loc = JSON.parse(store.get('mazec_prog_' + user.nick)) || {}; }catch(e){}
+  const sp = serverProg || {}, best = {};
+  for (const src of [loc.best || {}, sp.best || {}]) for (const k in src) best[k] = best[k] ? Math.min(best[k], src[k]) : src[k];
+  const def = { shirt: '#2f7bf5', pants: '#20304f', hat: null, hair: '#6b3f20', skin: '#f2b27c' };
+  prog = { best, reached: Math.max(1, loc.reached || 1, sp.reached || 1), char: Object.assign(def, loc.char, sp.char) };
+  saveProg();
+}
+let syncT;
+function saveProg(){
+  if (!user) return;
+  store.set('mazec_prog_' + user.nick, JSON.stringify(prog));
+  clearTimeout(syncT);
+  syncT = setTimeout(() => api({ action: 'save', nick: user.nick, hash: user.hash, progress: prog }), 800);
+}
+async function doAuth(kind, nick, pass){
+  nick = nick.trim();
+  if (!NICK_RE.test(nick)) return 'Přezdívka: 3–16 znaků, bez mezer';
+  if (pass.length < 4) return 'Heslo: aspoň 4 znaky';
+  const hash = await sha('mazec:' + nick.toLowerCase() + ':' + pass);
+  let res = await api({ action: kind, nick, hash });
+  if (res === null){            // bez serveru – účet jen v tomto prohlížeči
+    const users = JSON.parse(store.get('mazec_users') || '{}'), k = nick.toLowerCase();
+    if (kind === 'register'){ if (users[k]) return 'Přezdívka už existuje'; users[k] = hash; store.set('mazec_users', JSON.stringify(users)); }
+    else if (users[k] !== hash) return 'Špatná přezdívka nebo heslo';
+    res = { ok: true, nick, progress: null };
+  } else if (!res.ok){
+    return res.error === 'exists' ? 'Přezdívka už existuje' : res.error === 'bad' ? 'Špatná přezdívka nebo heslo' :
+           res.error === 'net' ? 'Nelze se spojit, zkus to znovu' : 'Něco se pokazilo';
+  }
+  user = { nick: res.nick || nick, hash }; store.set('mazec_user', JSON.stringify(user)); loadProg(res.progress);
+  refreshLevels(); return null;
+}
+function cacheLevels(){ store.set('mazec_levels', JSON.stringify(customLevels)); }
+async function refreshLevels(){
+  const res = await apiGet('action=levels');
+  if (res && res.ok){ customLevels = res.levels; cacheLevels(); }
+}
+async function silentLogin(){
+  if (!user) return;
+  loadProg(null);
+  const res = await api({ action: 'login', nick: user.nick, hash: user.hash });
+  if (res && res.ok) loadProg(res.progress);
+  refreshLevels();
+}
 
 // ---------- stav hry ----------
 let W, cols, g, fg, fakes, objs, spawns, parts, door, door2, bonus = false;
-let lvl = 1, hearts = 10, gum, keys, timeLeft, T = 0, camX = 0, shake = 0;
-let P, safe, safeT, doorCD = 0, paused = true, gumWarn = 0;
+let lvl = 1, curDef = null, hearts = 10, gum, keys, timeLeft, elapsed = 0, T = 0, camX = 0, shake = 0;
+let P, safe, safeT, doorCD = 0, paused = true, gumWarn = 0, mode = 'menu', savedHearts = 10;
 let stroke = { n: 0 };
 
 // ---------- mapa (mřížka buněk) ----------
@@ -107,24 +256,27 @@ const clearR = (x, y, w, h) => fill(x, y, w, h, 0);
 
 // ---------- stavebnice levelů ----------
 const mkEnemy = (x, y, sp, aggro) => ({ t: 'enemy', x, y, vx: 0, vy: 0, w: 26, h: 28, sp, aggro, face: 1, grounded: false, r: 16 });
+const mkBoss = x => ({ t: 'enemy', boss: true, x, y: GT, vx: 0, vy: 0, w: 80, h: 90, sp: 65, aggro: 900, face: -1, grounded: false, r: 45, leapT: 2.5 });
 const B = {
   ground: (a, b) => fill(a, GT, b - a, 60, 1),
   pit:    (a, b) => clearR(a, GT, b - a, 60),
   wall:   (x, w = 30, t = 0, b = GT) => fill(x, t, w, b - t, 3),
   block:  (x, y, w, h) => fill(x, y, w, h, 1),
+  fakeAt: (x, y, w, h) => { clearR(x, y, w, h); fakes.push({ cells: [], t: null }); fill(x, y, w, h, 2, fakes.length); },
   fake:   (x, w) => { clearR(x, GT, w, 60); fakes.push({ cells: [], t: null }); fill(x, GT, w, 60, 2, fakes.length); },
   enemy:  (x, sp = 70, aggro = 600, y = GT) => objs.push(mkEnemy(x, y, sp, aggro)),
+  boss:   x => objs.push(mkBoss(x)),
   ambush: (trig, x, sp = 100, aggro = 3000, y = GT) => spawns.push({ trig, e: mkEnemy(x, y, sp, aggro) }),
   spikes: (x, n) => { for (let i = 0; i < n; i++) objs.push({ t: 'spike', x: x + i * 20 + 10, y: GT, r: 10, vy: 0 }); },
   bomb:   x => objs.push({ t: 'bomb', x, y: GT, r: 14, cov: new Set(), vy: 0 }),
   key:    (x, y = GT - 40) => objs.push({ t: 'key', x, y, r: 12 }),
   heart:  (x, y = GT - 40) => objs.push({ t: 'heart', x, y, r: 12 }),
   sharp:  x => objs.push({ t: 'sharp', x, y: GT - 30, r: 14 }),
-  door:   x => { door = { x }; }
+  door:   x => { door = { x, y: GT }; }
 };
 
-const LEVELS = [
- { name: 'Level 1 – Zeď', hint: 'Podrž myš a přejeď přes zeď – vymaž v ní průchod!', w: 2000, time: 60, build(){
+const BUILTIN = [
+ { name: 'Level 1 – Zeď', hint: 'Chůze A D, skok mezerník. Drž myš a vymaž zeď!', w: 2000, time: 60, build(){
     B.ground(0, 2000); B.wall(600); B.wall(1100); B.wall(1500);
     [250, 450, 850, 1300, 1750, 1820].forEach((x, i) => B.key(x, i % 2 ? 340 : 350));
     B.heart(1000, 330); B.door(1900); } },
@@ -141,13 +293,13 @@ const LEVELS = [
     [350, 600, 1000, 1400, 1850, 2150].forEach((x, i) => B.key(x, i % 2 ? 340 : 350));
     B.heart(1300, 330); B.sharp(950); B.sharp(1900); B.door(2320); } },
 
- { name: 'Level 4 – Pasti', hint: 'Pasti vymaž dřív, než na ně šlápneš. Nebo je přeskoč (Enter = dlouhý skok).', w: 2400, time: 65, build(){
+ { name: 'Level 4 – Pasti', hint: 'Vymaž pasti, nebo je přeskoč (Enter = dlouhý skok).', w: 2400, time: 65, build(){
     B.ground(0, 2400); B.spikes(500, 3); B.spikes(800, 6); B.wall(1100); B.spikes(1250, 10);
     B.spikes(1700, 4); B.enemy(1900, 80, 500); B.pit(2050, 2120);
     [300, 650, 1000, 1450, 1900, 2250].forEach((x, i) => B.key(x, i % 2 ? 330 : 350));
     B.heart(1000, 330); B.sharp(1200); B.door(2330); } },
 
- { name: 'Level 5 – Bludiště', hint: 'Dole nebo nahoře? Zvol rychle cestu! Schody jsou u začátku.', w: 2650, time: 80, build(){
+ { name: 'Level 5 – Bludiště', hint: 'Dole, nebo nahoře? Schody jsou u začátku.', w: 2650, time: 80, build(){
     B.ground(0, 2650);
     for (let i = 0; i < 4; i++) fill(200 + i * 40, GT - (i + 1) * 40, 40, (i + 1) * 40, 1);
     fill(360, 230, 2090, 20, 1); clearR(1000, 230, 80, 20); clearR(1800, 230, 80, 20);
@@ -155,15 +307,15 @@ const LEVELS = [
     B.wall(900, 30, 0, 230); B.wall(1700, 30, 0, 230);
     B.enemy(1500, 70, 300); B.ambush(1650, 2100, 90, 800, 230);
     [[500, 350], [1150, 350], [1650, 350], [600, 190], [1300, 190], [2100, 190], [2350, 190]].forEach(k => B.key(k[0], k[1]));
-    B.heart(1150, 300); B.sharp(2250); B.door(2540); } },
+    B.heart(1150, 300); B.sharp(2250); B.sharp(800); B.door(2540); } },
 
- { name: 'Level 6 – Bomby', hint: 'Bombu vymaž CELOU jedním tahem. Jen napůl = bum!', w: 2300, time: 70, build(){
+ { name: 'Level 6 – Bomby', hint: 'Bombu vymaž CELOU jedním tahem. Napůl = bum!', w: 2300, time: 70, build(){
     B.ground(0, 2300); B.wall(600); B.bomb(560); B.wall(1100); B.bomb(1160);
     B.enemy(1450, 75, 500); B.bomb(1500); B.pit(1800, 1880); B.bomb(1700); B.spikes(1950, 3);
     [300, 500, 900, 1300, 1900, 2100].forEach((x, i) => B.key(x, i % 2 ? 330 : 350));
-    B.heart(1000, 330); B.sharp(1350); B.door(2220); } },
+    B.heart(1000, 330); B.sharp(1350); B.sharp(700); B.door(2220); } },
 
- { name: 'Level 7 – Falešná podlaha', hint: 'Oranžová podlaha po šlápnutí zmizí! Přeskoč ji (mezerník, nebo Enter = dlouhý skok).', w: 2400, time: 70, build(){
+ { name: 'Level 7 – Falešná podlaha', hint: 'Oranžová podlaha zmizí! Přeskoč ji (Enter = dlouhý skok).', w: 2400, time: 70, build(){
     B.ground(0, 2400); B.fake(500, 120); B.fake(900, 100); B.fake(1300, 160); B.fake(1700, 100); B.wall(2000);
     B.enemy(1050, 80, 500); B.enemy(2200, 85, 500);
     [300, 560, 950, 1380, 1760, 2150].forEach((x, i) => B.key(x, i % 2 ? 350 : 335));
@@ -173,26 +325,81 @@ const LEVELS = [
     B.ground(0, 2200); [400, 750, 1100, 1450, 1800].forEach(x => B.wall(x, 24));
     B.ambush(600, 100, 115); B.enemy(1300, 80, 500);
     [250, 550, 900, 1250, 1650, 2000].forEach((x, i) => B.key(x, i % 2 ? 340 : 350));
-    B.heart(1000, 330); B.sharp(1500); B.door(2120); } },
+    B.heart(1000, 330); B.sharp(1500); B.sharp(800); B.door(2120); } },
 
- { name: 'Level 9 – Kombo', hint: 'Vymaž víc věcí jedním tahem a dostaneš gumu zpět (kombo)!', w: 2400, time: 75, gum: 250, build(){
+ { name: 'Level 9 – Kombo', hint: 'Víc věcí jedním tahem = kombo, guma zpět!', w: 2400, time: 75, gum: 60, build(){
     B.ground(0, 2400); B.spikes(700, 3); B.enemy(790, 70, 200); B.wall(1050, 36);
     B.spikes(1300, 5); B.enemy(1400, 70, 200); B.wall(1600, 36);
     B.bomb(1880); B.spikes(1920, 2); B.enemy(2000, 75, 200);
     [300, 600, 950, 1450, 1800, 2200].forEach((x, i) => B.key(x, i % 2 ? 340 : 350));
     B.heart(1000, 330); B.sharp(1000); B.sharp(1650); B.door(2330); } },
 
- { name: 'Level 10 – Finále', hint: 'Všechny triky dohromady. Hodně štěstí!', w: 3200, time: 100, build(){
+ { name: 'Level 10 – Všechno dohromady', hint: 'Všechny triky najednou. Hodně štěstí!', w: 3200, time: 100, build(){
     B.ground(0, 3200); B.wall(500); B.spikes(700, 4); B.fake(900, 110); B.enemy(1100, 80, 450);
     B.wall(1350); B.bomb(1310); B.pit(1500, 1590); B.fake(1650, 120); B.ambush(1750, 1400, 140);
     B.wall(2000); B.spikes(2150, 8); B.bomb(2400); B.fake(2500, 150); B.wall(2800); B.ambush(2550, 3000, 90, 900);
     [300, 800, 1200, 1800, 2300, 2700, 3000].forEach((x, i) => B.key(x, i % 2 ? 340 : 350));
-    B.heart(1000, 320); B.heart(2200, 320); B.sharp(1400); B.sharp(2600); B.door(3110); } }
+    B.heart(1000, 320); B.heart(2200, 320); B.sharp(1400); B.sharp(2600); B.sharp(600); B.door(3110); } },
+
+ { name: 'Level 11 – Věž', hint: 'Dvě patra. Nahoře falešná podlaha, dole bomby.', w: 3000, time: 110, build(){
+    B.ground(0, 3000);
+    for (let i = 0; i < 4; i++) fill(200 + i * 40, GT - (i + 1) * 40, 40, (i + 1) * 40, 1);
+    fill(360, 230, 540, 20, 1); B.fakeAt(900, 230, 140, 20);
+    fill(1040, 230, 460, 20, 1); B.fakeAt(1500, 230, 120, 20);
+    fill(1620, 230, 380, 20, 1); B.fakeAt(2000, 230, 160, 20);
+    fill(2160, 230, 300, 20, 1);
+    B.wall(700, 30, 250); B.bomb(660); B.wall(1300, 30, 250); B.bomb(1260); B.spikes(1700, 5); B.wall(2100, 30, 250);
+    B.wall(1100, 30, 0, 230); B.wall(1900, 30, 0, 230);
+    B.ambush(800, 300, 120); B.ambush(1000, 1600, 100, 900, 230); B.enemy(2400, 80, 500);
+    [[500, 350], [1000, 350], [1500, 350], [600, 190], [1300, 190], [1800, 190], [2300, 350], [2700, 350]].forEach(k => B.key(k[0], k[1]));
+    B.heart(1350, 190); B.sharp(1000); B.sharp(2500); B.sharp(400); B.door(2900); } },
+
+ { name: 'Level 12 – Boss', hint: 'Boss nejde vymazat! Vymaž podlahu pod ním a přeskoč díru.', w: 2700, time: 100, build(){
+    B.ground(0, 1700); B.block(1700, GT, 1000, 18);
+    B.wall(600); B.spikes(800, 4); B.wall(1100); B.enemy(1350, 80, 500);
+    B.boss(2350);
+    [300, 700, 1000, 1250, 1500, 1650].forEach((x, i) => B.key(x, i % 2 ? 340 : 350));
+    B.heart(1200, 330); B.heart(1800, 330); B.sharp(900); B.sharp(1500); B.sharp(1800); B.door(2620); } }
 ];
 
+// ---------- vlastní levely (z editoru) ----------
+function buildFromData(c){
+  const rows = c.map;
+  for (let gy = 0; gy < rows.length; gy++) for (let gx = 0; gx < rows[gy].length; gx++){
+    const ch = rows[gy][gx];
+    if (ch === 'G') fill(gx * TILE, gy * TILE, TILE, TILE, 1); else if (ch === 'W') fill(gx * TILE, gy * TILE, TILE, TILE, 3);
+  }
+  const seen = new Set();
+  for (let gy = 0; gy < rows.length; gy++) for (let gx = 0; gx < rows[gy].length; gx++){
+    if (rows[gy][gx] !== 'F' || seen.has(gy * 1000 + gx)) continue;
+    const q = [[gx, gy]], tiles = []; seen.add(gy * 1000 + gx);
+    while (q.length){ const [x, y] = q.pop(); tiles.push([x, y]);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){ const nx = x + dx, ny = y + dy;
+        if (rows[ny] && rows[ny][nx] === 'F' && !seen.has(ny * 1000 + nx)){ seen.add(ny * 1000 + nx); q.push([nx, ny]); } } }
+    fakes.push({ cells: [], t: null }); const id = fakes.length;
+    tiles.forEach(([x, y]) => fill(x * TILE, y * TILE, TILE, TILE, 2, id));
+  }
+  for (const [t, gx, gy] of c.objs){
+    const x = gx * TILE + TILE / 2, fy = (gy + 1) * TILE, cy = gy * TILE + TILE / 2;
+    if (t === 'E') objs.push(mkEnemy(x, fy, 70, 500));
+    else if (t === 'S') objs.push({ t: 'spike', x, y: fy, r: 10, vy: 0 });
+    else if (t === 'B') objs.push({ t: 'bomb', x, y: fy, r: 14, cov: new Set(), vy: 0 });
+    else if (t === 'K') objs.push({ t: 'key', x, y: cy, r: 12 });
+    else if (t === 'H') objs.push({ t: 'heart', x, y: cy, r: 12 });
+    else if (t === 'O') objs.push({ t: 'sharp', x, y: cy, r: 14 });
+    else if (t === 'D') door = { x, y: fy };
+  }
+  if (!door) door = { x: c.w - 60, y: GT };
+}
+function customDef(c){
+  if (!c._def) c._def = { name: c.name, hint: 'Vytvořil ' + c.author, w: c.w, time: 90, custom: true, author: c.author, build: () => buildFromData(c) };
+  return c._def;
+}
+const allLevels = () => BUILTIN.concat(customLevels.map(customDef));
+
 // ---------- načtení levelu ----------
-function loadLevel(n){
-  lvl = n; const d = LEVELS[n - 1]; W = d.w + 800; cols = Math.ceil(W / C);
+function loadLevelObj(d, n){
+  lvl = n; curDef = d; W = d.w + 800; cols = Math.ceil(W / C);
   g = new Uint8Array(cols * ROWS); fg = new Uint8Array(cols * ROWS);
   fakes = []; objs = []; spawns = []; parts = []; door = null; door2 = null; bonus = false;
   d.build();
@@ -200,11 +407,19 @@ function loadLevel(n){
   const bx = d.w;
   B.ground(bx, W); B.key(bx + 150); B.key(bx + 350, 340); B.spikes(bx + 250, 3); B.wall(bx + 450);
   B.enemy(bx + 620, 75, 400); B.key(bx + 560); B.key(bx + 700, 340); B.sharp(bx + 100);
-  door2 = { x: W - 60 };
-  gum = d.gum || GUM_MAX; keys = 0; timeLeft = d.time; doorCD = 0; stroke = { n: 0 };
+  door2 = { x: W - 60, y: GT };
+  gum = d.gum || GUM_MAX; keys = 0; timeLeft = d.time; elapsed = 0; doorCD = 0; stroke = { n: 0 };
   P = { x: 60, y: GT, vx: 0, vy: 0, w: 22, h: 48, face: 1, grounded: true, coy: 0, buf: 0, bufL: 0, leap: 0, leapT: 0, leapDir: 1, inv: 1.5 };
   safe = { x: 60, y: GT }; safeT = 0; camX = 0; paused = false; gumWarn = 0;
-  toast(d.name + ' – ' + d.hint, 4.5);
+  if (mode !== 'test') setMode('play');
+  closeMenu(); toast(d.name + ' – ' + d.hint, 4.5);
+}
+function loadLevel(n){ const all = allLevels(); n = Math.max(1, Math.min(n, all.length)); loadLevelObj(all[n - 1], n); }
+const reload = () => loadLevelObj(curDef, lvl);
+function playLevel(n){
+  const all = allLevels(); n = Math.max(1, Math.min(n, all.length)); const d = all[n - 1];
+  if (d.custom) panel('<h1>Level ' + n + '</h1><p>Tento level vytvořil <b>' + esc(d.author) + '</b></p>', [{ label: 'Hrát', fn: () => loadLevel(n) }]);
+  else loadLevel(n);
 }
 
 // ---------- fyzika (hráč i nepřátelé) ----------
@@ -240,41 +455,216 @@ function crumb(x, y, col){ if (parts.length < 500) parts.push({ x, y, vx: (Math.
 const cellCol = t => t === 1 ? '#8d5b2e' : t === 3 ? '#9ca7b3' : '#f0a53a';
 function toast(msg, dur = 2){ const t = $('toast'); t.textContent = msg; t.style.opacity = 1; clearTimeout(toast.h); toast.h = setTimeout(() => t.style.opacity = 0, dur * 1000); }
 
-// ---------- panely ----------
+// ---------- panely, menu ----------
+function el(tag, props, parent){ const e = document.createElement(tag); Object.assign(e, props || {}); if (parent) parent.appendChild(e); return e; }
+function btn(parent, label, fn, alt){ const b = el('button', { className: 'btn' + (alt ? ' alt' : ''), textContent: label }, parent); b.onclick = fn; return b; }
 function panel(html, btns){
-  paused = true; const p = $('panel'); p.innerHTML = html;
-  (btns || []).forEach(b => { const e = document.createElement('button'); e.className = 'btn'; e.textContent = b.label;
-    e.onclick = () => { p.style.display = 'none'; b.fn(); }; p.appendChild(e); });
+  paused = true; closeMenu(); const p = $('panel'); p.innerHTML = html;
+  (btns || []).forEach(b => { const e = btn(p, b.label, () => { p.style.display = 'none'; b.fn(); }, b.alt); });
   p.style.display = 'flex';
 }
-function startPanel(){
-  panel('<h1>🧽 MAZEC</h1><p>Vymažeš cokoliv – ale <b>navždy</b>. I podlahu pod sebou!</p>' +
-    '<p><b>A D / šipky</b> chůze · <b>mezerník</b> skok · <b>Enter</b> dlouhý skok vpřed<br>' +
-    '<b>Levé tlačítko myši (drž a táhni)</b> = guma. Na mobilu přetáhni prstem.</p>' +
-    '<p>Seber 5 🔑 klíčů a dojdi ke dveřím. Pozor na nepřátele, pasti, bomby a oranžovou falešnou podlahu!</p>',
-    [{ label: '▶ Hrát od 1. levelu', fn: () => { hearts = 10; loadLevel(1); } }]);
-  const row = document.createElement('div'); row.innerHTML = '<p>…nebo si vyber level:</p>';
-  for (let i = 1; i <= 10; i++){ const s = document.createElement('span'); s.className = 'lv'; s.textContent = i;
-    s.onclick = () => { $('panel').style.display = 'none'; hearts = 10; loadLevel(i); }; row.appendChild(s); }
-  $('panel').appendChild(row);
+const closePanel = () => { $('panel').style.display = 'none'; };
+const panelOpen = () => $('panel').style.display === 'flex';
+
+function setMode(m){
+  mode = m; const ed = m === 'edit';
+  wrap.classList.toggle('editing', ed); $('editor').style.display = ed ? 'flex' : 'none';
+  $('hud').style.display = ed ? 'none' : ''; $('gumrow').style.display = ed ? 'none' : '';
 }
-function gameOver(){
-  paused = true;
-  panel('<h1>💔 Došla srdce</h1><p>Zkus to znovu – tentokrát chytřeji.</p>', [{ label: '↻ Zkusit level znovu', fn: () => { hearts = 10; loadLevel(lvl); } }]);
-}
-function levelDone(){
-  sfx(660, .15); setTimeout(() => sfx(880, .25), 150);
-  const left = Math.max(0, Math.ceil(timeLeft));
-  if (lvl >= LEVELS.length){
-    panel('<h1>🎉 Vyhrál jsi!</h1><p>Prošel jsi všech 10 levelů a vymazal celý svět.<br>Zbylo ti ' + hearts + ' srdcí.</p>',
-      [{ label: '↻ Hrát znovu', fn: () => { hearts = 10; startPanel(); } }]);
-  } else {
-    panel('<h1>✅ Level ' + lvl + ' hotov!</h1><p>Zbývalo ti ' + left + ' s · srdcí: ' + hearts + '</p>',
-      [{ label: 'Další level ▶', fn: () => loadLevel(lvl + 1) }]);
+function closeMenu(){ const m = $('menu'); if (m.style.display === 'flex'){ m.style.display = 'none'; if (!panelOpen() && (mode === 'play' || mode === 'test') && g) paused = false; } }
+function openMenu(){
+  if (mode === 'edit' || panelOpen() || !g) return;
+  const m = $('menu'); if (m.style.display === 'flex'){ closeMenu(); return; }
+  m.innerHTML = ''; paused = true;
+  const add = (label, fn) => { const b = el('button', { textContent: label }, m); b.onclick = () => { m.style.display = 'none'; fn(); }; };
+  if (mode === 'test') add('⬅ Zpět do editoru', backToEditor);
+  else {
+    add('▶ Hrát', () => { if (lvl === prog.reached && curDef) paused = false; else playLevel(prog.reached); });
+    add('✏ Vlastní level', levelsPanel);
+    add('🙂 Postavička', charPanel);
+    add(muted ? '🔇 Zvuk: vypnuto' : '🔊 Zvuk: zapnuto', () => { toggleMute(); paused = false; });
+    add('⎋ Odhlásit', logout);
   }
+  m.style.display = 'flex';
+}
+$('menuBtn').onclick = e => { e.stopPropagation(); openMenu(); };
+
+// úvodní obrazovka
+const LOGO = '<div class="logo">MAZEC</div>';
+function startPanel(){
+  setMode('menu');
+  if (user){
+    panel(LOGO + '<div class="sub">Ahoj, ' + esc(user.nick) + '!</div>',
+      [{ label: '▶  HRÁT', fn: () => { startMusic(); hearts = 10; playLevel(prog.reached); } }]);
+    const p = $('panel'); const o = el('button', { className: 'btn alt sm', textContent: 'Odhlásit' }, p); o.style.marginTop = '10px'; o.onclick = logout;
+  } else authPanel();
+}
+function authPanel(){
+  panel(LOGO + '<div class="sub">Vymaž svět. Přežij.</div>');
+  const p = $('panel');
+  const n = el('input', { placeholder: 'přezdívka', maxLength: 16, autocomplete: 'username' }, p);
+  const w = el('input', { placeholder: 'heslo', type: 'password', autocomplete: 'current-password' }, p);
+  const err = el('div', { className: 'err' }, p), row = el('div', { className: 'row' }, p);
+  let busy = false;
+  const go = async kind => { if (busy) return; busy = true; err.textContent = '';
+    const e = await doAuth(kind, n.value, w.value); busy = false;
+    if (e) err.textContent = e; else startPanel(); };
+  btn(row, 'Přihlásit', () => go('login')); btn(row, 'Registrovat', () => go('register'), true);
+  n.onkeydown = e => { if (e.key === 'Enter') w.focus(); };
+  w.onkeydown = e => { if (e.key === 'Enter') go('login'); };
+}
+function logout(){ user = null; store.del('mazec_user'); g = null; P = null; startPanel(); }
+
+// postavička
+const COLORS = ['#2f7bf5', '#e0455a', '#2fb86b', '#f2c230', '#a05be0', '#ff7ab6', '#2b3240', '#f5f5f5',
+  '#ff8a1f', '#6b3f20', '#8a8f98', '#2fc4d6', '#20304f', '#9be03a'];
+const PARTS = [['🧢 Čepice', 'hat'], ['👕 Tričko', 'shirt'], ['👖 Kalhoty', 'pants'], ['💇 Vlasy', 'hair'], ['✋ Pleť', 'skin']];
+function charPanel(){
+  panel('<h1>Postavička</h1>');
+  const p = $('panel'), mid = el('div', { className: 'row' }, p); mid.style.cssText = 'align-items:center;flex-wrap:nowrap;gap:calc(20*var(--u))';
+  const prev = el('canvas', { width: 120, height: 130 }, mid); prev.style.cssText = 'width:calc(80*var(--u));min-width:56px;position:static;cursor:default';
+  const side = el('div', {}, mid);
+  const tabs = el('div', { className: 'row' }, side), pal = el('div', { className: 'row' }, side);
+  pal.style.maxWidth = 'calc(330*var(--u))'; let part = 'hat';
+  const draw = () => { const c2 = prev.getContext('2d'); c2.clearRect(0, 0, 120, 130); c2.save(); c2.translate(60, 120); c2.scale(1.9, 1.9);
+    drawChar(c2, 1, 0, false, false, prog.char); c2.restore(); };
+  const showPal = () => {
+    pal.innerHTML = '';
+    const list = part === 'hat' ? [null].concat(COLORS) : COLORS;
+    list.forEach(col => {
+      const s = el('span', { className: 'sw' + (prog.char[part] === col || (col === null && !prog.char.hat) ? ' on' : '') }, pal);
+      if (col) s.style.background = col; else { s.style.background = '#334'; s.textContent = '✕'; s.style.cssText += ';color:#fff;text-align:center;line-height:calc(20*var(--u));font-size:max(10px,calc(13*var(--u)))'; }
+      s.onclick = () => { prog.char[part] = col; saveProg(); draw(); showPal(); };
+    });
+  };
+  PARTS.forEach(([label, key]) => {
+    const b = el('button', { className: 'btn sm' + (key === part ? '' : ' alt'), textContent: label }, tabs); b.style.margin = 'calc(2*var(--u))';
+    b.onclick = () => { part = key; tabs.querySelectorAll('button').forEach(x => x.className = 'btn sm alt'); b.className = 'btn sm'; showPal(); };
+  });
+  draw(); showPal(); btn(p, 'Hotovo', () => { closePanel(); paused = false; });
+}
+
+// seznam vlastních levelů
+function levelsPanel(){
+  panel('<h1>Vlastní level</h1><p>Nakresli level a pošli ho spolužákům. Objeví se jim ve hře.</p>');
+  const p = $('panel');
+  btn(p, '＋ Nový level', () => { closePanel(); openEditor(null); });
+  customLevels.filter(c => c.author === user.nick).forEach(c => {
+    const it = el('div', { className: 'item' }, p);
+    const e = el('button', { className: 'btn alt sm', textContent: '✏ ' + c.name }, it); e.onclick = () => { closePanel(); openEditor(c); };
+    const d = el('button', { className: 'btn sm', textContent: '🗑' }, it);
+    d.onclick = async () => { if (!confirm('Smazat level „' + c.name + '"?')) return;
+      await api({ action: 'deleteLevel', nick: user.nick, hash: user.hash, id: c.id });
+      customLevels = customLevels.filter(x => x.id !== c.id); cacheLevels(); levelsPanel(); };
+  });
+  btn(p, 'Zpět', () => { closePanel(); paused = false; });
+}
+
+// ---------- editor levelů ----------
+const TOOLS = [['G', '🟫', 'Zem'], ['W', '⬜', 'Zeď'], ['F', '🟧', 'Falešná podlaha'], ['E', '👾', 'Nepřítel'], ['S', '🔺', 'Hroty'],
+  ['B', '💣', 'Bomba'], ['K', '🔑', 'Klíč'], ['H', '❤️', 'Srdce'], ['O', '🧽', 'Ořezávátko'], ['D', '🚪', 'Dveře'], ['X', '✖', 'Smazat']];
+let ed = null, edDown = false;
+function openEditor(c){
+  const map = [];
+  for (let y = 0; y < ED_ROWS; y++) map.push(c ? c.map[y].split('') : Array.from({ length: ED_COLS }, () => (y >= 13 ? 'G' : '.')));
+  ed = { id: c ? c.id : null, name: c ? c.name : '', map, objs: c ? c.objs.map(o => o.slice()) : [], tool: 'G', cam: 0, tested: false, created: c ? c.created : 0 };
+  const bar = $('editor'); bar.innerHTML = '';
+  TOOLS.forEach(([k, ic, tip]) => { const b = el('button', { textContent: ic, title: tip }, bar); b.dataset.k = k; if (k === ed.tool) b.className = 'on';
+    b.onclick = () => { ed.tool = k; bar.querySelectorAll('button[data-k]').forEach(x => x.className = x.dataset.k === k ? 'on' : ''); }; });
+  el('span', { className: 'sep' }, bar);
+  const sc = (d) => () => { ed.cam = Math.max(0, Math.min(ED_COLS * TILE - VW, ed.cam + d)); };
+  el('button', { textContent: '◀' }, bar).onclick = sc(-300); el('button', { textContent: '▶' }, bar).onclick = sc(300);
+  el('button', { className: 'wide', textContent: '▶ Zkusit' }, bar).onclick = startTest;
+  el('button', { className: 'wide', textContent: '💾 Uložit' }, bar).onclick = trySave;
+  el('button', { className: 'wide', textContent: '✕' }, bar).onclick = () => { if (confirm('Zahodit úpravy?')) leaveEditor(); };
+  setMode('edit'); paused = true; closePanel();
+}
+function leaveEditor(){ ed = null; setMode('menu'); startPanel(); }
+function edPaint(sx, sy){
+  const gx = Math.floor((sx + ed.cam) / TILE), gy = Math.floor(sy / TILE);
+  if (gx < 4 || gx >= ED_COLS || gy < 2 || gy >= ED_ROWS) return;      // začátek (4 políčka) zůstává pevný
+  ed.tested = false; const t = ed.tool;
+  ed.objs = ed.objs.filter(o => !(o[1] === gx && o[2] === gy));
+  if (t === 'X'){ ed.map[gy][gx] = '.'; return; }
+  if ('GWF'.includes(t)){ ed.map[gy][gx] = t; return; }
+  if (t === 'D') ed.objs = ed.objs.filter(o => o[0] !== 'D');
+  ed.map[gy][gx] = '.'; ed.objs.push([t, gx, gy]);
+}
+function edData(){ return { id: ed.id, name: ed.name, author: user.nick, w: ED_COLS * TILE, map: ed.map.map(r => r.join('')), objs: ed.objs, created: ed.created }; }
+function startTest(){
+  if (!ed.objs.some(o => o[0] === 'D')){ toast('Přidej dveře 🚪', 2); return; }
+  savedHearts = hearts; hearts = 10; mode = 'test'; setMode('test');
+  const c = edData(); loadLevelObj({ name: 'Zkouška', hint: 'Dohraj svůj level', w: c.w, time: 120, build: () => buildFromData(c) }, 0);
+}
+function backToEditor(){ hearts = savedHearts; closePanel(); setMode('edit'); paused = true; }
+function trySave(){
+  if (!ed.tested){ toast('Nejdřív level dohraj: ▶ Zkusit', 2.5); return; }
+  panel('<h1>Název levelu</h1>');
+  const p = $('panel'), n = el('input', { placeholder: 'název', maxLength: 24, value: ed.name }, p);
+  const row = el('div', { className: 'row' }, p);
+  btn(row, 'Uložit', () => { const nm = n.value.trim() || 'Můj level'; ed.name = nm; saveCustom(); });
+  btn(row, 'Zpět', () => { closePanel(); });
+  n.onkeydown = e => { if (e.key === 'Enter') { ed.name = n.value.trim() || 'Můj level'; saveCustom(); } };
+  n.focus();
+}
+async function saveCustom(){
+  const data = edData(); closePanel();
+  const res = await api({ action: 'saveLevel', nick: user.nick, hash: user.hash, level: data });
+  if (res === null) data.id = data.id || ('l' + Date.now());
+  else if (res.ok) data.id = res.id;
+  else { toast('Uložení se nepovedlo, zkus to znovu', 2.5); return; }
+  data.created = data.created || Date.now();
+  const i = customLevels.findIndex(c => c.id === data.id); if (i >= 0) customLevels[i] = data; else customLevels.push(data);
+  cacheLevels(); ed = null; setMode('menu'); hearts = 10;
+  panel('<h1>💾 Uloženo</h1><p>Tvůj level je ve hře.</p>', [{ label: 'OK', fn: () => playLevel(prog.reached) }]);
+  refreshLevels();
+}
+function edScroll(dt){
+  const d = (K.ArrowRight || K.KeyD ? 1 : 0) - (K.ArrowLeft || K.KeyA ? 1 : 0);
+  if (d) ed.cam = Math.max(0, Math.min(ED_COLS * TILE - VW, ed.cam + d * 700 * dt));
+}
+function renderEditor(){
+  camX = ed.cam; drawBg();
+  const c0 = Math.floor(ed.cam / TILE), c1 = Math.min(ED_COLS - 1, c0 + 31), ox = ed.cam;
+  for (let gy = 0; gy < ED_ROWS; gy++) for (let gx = c0; gx <= c1; gx++){
+    const ch = ed.map[gy][gx]; if (ch === '.') continue;
+    ctx.fillStyle = ch === 'G' ? (gy > 0 && ed.map[gy - 1][gx] === '.' ? '#58b947' : '#8d5b2e') : ch === 'W' ? '#9ca7b3' : '#f0a53a';
+    ctx.fillRect(gx * TILE - ox, gy * TILE, TILE, TILE);
+    ctx.strokeStyle = '#0003'; ctx.strokeRect(gx * TILE - ox + .5, gy * TILE + .5, TILE - 1, TILE - 1);
+  }
+  ctx.strokeStyle = '#ffffff22'; ctx.lineWidth = 1;
+  for (let gx = c0; gx <= c1 + 1; gx++){ ctx.beginPath(); ctx.moveTo(gx * TILE - ox + .5, 60); ctx.lineTo(gx * TILE - ox + .5, VH); ctx.stroke(); }
+  for (let gy = 2; gy <= ED_ROWS; gy++){ ctx.beginPath(); ctx.moveTo(0, gy * TILE + .5); ctx.lineTo(VW, gy * TILE + .5); ctx.stroke(); }
+  ctx.font = '22px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const IC = { E: '👾', S: '🔺', B: '💣', K: '🔑', H: '❤️', O: '🧽', D: '🚪' };
+  for (const [t, gx, gy] of ed.objs) ctx.fillText(IC[t], gx * TILE - ox + TILE / 2, gy * TILE + TILE / 2 + 1);
+  ctx.fillText('🧍', 60 - ox, 13 * TILE - 14);                     // kde začíná hráč
+  if (cur && mouseIn){ const gx = Math.floor((cur.x + ed.cam) / TILE), gy = Math.floor(cur.y / TILE);
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.strokeRect(gx * TILE - ox + 1, gy * TILE + 1, TILE - 2, TILE - 2); }
+  ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
 }
 
 // ---------- zranění, smrt, návrat ----------
+function gameOver(){
+  paused = true;
+  if (mode === 'test') panel('<h1>💔 Došla srdce</h1>', [{ label: '↻ Znovu', fn: () => { hearts = 10; reload(); } }, { label: 'Zpět do editoru', fn: backToEditor, alt: true }]);
+  else panel('<h1>💔 Došla srdce</h1>', [{ label: '↻ Zkusit znovu', fn: () => { hearts = 10; reload(); } }]);
+}
+function levelDone(){
+  sfx(660, .15); setTimeout(() => sfx(880, .25), 150);
+  if (mode === 'test'){
+    ed.tested = true;
+    panel('<h1>✅ Dá se dohrát!</h1><p>Teď ho můžeš uložit.</p>', [{ label: 'Zpět do editoru', fn: backToEditor }]); return;
+  }
+  const all = allLevels(), tm = elapsed, prev = prog.best[lvl], rec = !prev || tm < prev;
+  if (rec) prog.best[lvl] = Math.round(tm * 10) / 10;
+  prog.reached = Math.max(prog.reached, Math.min(lvl + 1, all.length)); saveProg();
+  const fmt = s => s.toFixed(1).replace('.', ',') + ' s';
+  const html = '<h1>✅ Level ' + lvl + '</h1><p>⏱ ' + fmt(tm) + '</p><p>🏆 ' + (rec ? (prev ? 'Nový rekord!' : 'Rekord: ' + fmt(tm)) : 'Rekord: ' + fmt(prev)) + '</p>';
+  if (lvl >= all.length){
+    panel(html + '<p>Prošel jsi všechno! 🎉</p>', [{ label: '↻ Hrát znovu', fn: () => { hearts = 10; loadLevel(1); } }, { label: '✏ Vlastní level', fn: levelsPanel, alt: true }]);
+  } else panel(html, [{ label: 'Pokračovat', fn: () => playLevel(lvl + 1) }]);
+}
 function respawn(){
   P.x = safe.x; P.y = safe.y; P.vx = P.vy = 0; P.leap = 0; P.inv = 2.5;
   const cy0 = Math.floor(P.y / C);
@@ -297,14 +687,14 @@ function explode(b){
     if ((px - x) ** 2 + (py - y) ** 2 <= rr * rr){ const i = cy * cols + cx; if (g[i]){ crumb(px, py, cellCol(g[i])); g[i] = 0; fg[i] = 0; } }
   }
   for (let i = 0; i < 40; i++) parts.push({ x, y, vx: (Math.random() - .5) * 400, vy: (Math.random() - .5) * 400, life: .5, col: Math.random() < .5 ? '#ff8a1f' : '#ffd23a', s: 4 });
-  for (const o of objs.slice()){ const c = ctr(o); if (o !== b && Math.hypot(c.x - x, c.y - y) < 80 && (o.t === 'enemy' || o.t === 'spike')) remove(o); }
+  for (const o of objs.slice()){ const c = ctr(o); if (o !== b && Math.hypot(c.x - x, c.y - y) < 80 && ((o.t === 'enemy' && !o.boss) || o.t === 'spike')) remove(o); }
   if (Math.hypot(P.x - x, P.y - 24 - y) < 85) hurt('Výbuch!', true);
 }
 
 // ---------- objekty ----------
 const remove = o => { const i = objs.indexOf(o); if (i >= 0) objs.splice(i, 1); };
 function ctr(o){
-  if (o.t === 'enemy') return { x: o.x, y: o.y - 14 };
+  if (o.t === 'enemy') return { x: o.x, y: o.y - o.h / 2 };
   if (o.t === 'spike') return { x: o.x, y: o.y - 7 };
   if (o.t === 'bomb') return { x: o.x, y: o.y - o.r };
   return { x: o.x, y: o.y };
@@ -312,8 +702,8 @@ function ctr(o){
 
 // ---------- mazání ----------
 function objCost(){
-  gum = Math.max(0, gum - 5); stroke.n++;
-  if (stroke.n >= 2){ gum = Math.min(GUM_MAX, gum + 20); toast('KOMBO! +20 % gumy 🧽', 1.2); sfx(900, .15); }
+  gum = Math.max(0, gum - 10); stroke.n++;
+  if (stroke.n >= 2){ gum = Math.min(GUM_MAX, gum + 10); toast('KOMBO! +10 % gumy 🧽', 1.2); sfx(900, .15); }
 }
 function stamp(wx, wy){
   if (gum <= 0){ if (gumWarn <= 0){ toast('Došla guma! Najdi ořezávátko 🧽', 2); gumWarn = 3; } return; }
@@ -328,6 +718,7 @@ function stamp(wx, wy){
   if (n && Math.random() < .25) sfx(300 + Math.random() * 200, .05, 'triangle', .02);
   gum = Math.max(0, gum - n * COST);
   for (const o of objs.slice()){
+    if (o.boss) continue;
     const c = ctr(o);
     if (o.t === 'bomb'){
       for (let i = 0; i < 9; i++){
@@ -350,6 +741,7 @@ function endStroke(){
 // ---------- vstup ----------
 const K = {}; let jumpReq = false, leapReq = false, joyX = 0;
 addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
   if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(e.code)) e.preventDefault();
   if (e.repeat) return; K[e.code] = true;
   if (['Space', 'ArrowUp', 'KeyW'].includes(e.code)) jumpReq = true;
@@ -360,14 +752,17 @@ addEventListener('keyup', e => K[e.code] = false);
 let down = false, cur = { x: 0, y: 0 }, prev = { x: 0, y: 0 }, mouseIn = false, touchBrush = false;
 const toGame = e => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * VW, y: (e.clientY - r.top) / r.height * VH }; };
 cv.addEventListener('pointerdown', e => {
+  if (mode === 'edit'){ cv.setPointerCapture(e.pointerId); cur = toGame(e); edDown = true; edPaint(cur.x, cur.y); return; }
   if (paused || (e.pointerType === 'mouse' && e.button !== 0)) return;
   cv.setPointerCapture(e.pointerId); cur = toGame(e); prev = { ...cur }; down = true; touchBrush = e.pointerType !== 'mouse'; stroke = { n: 0 };
+  audio();
 });
-cv.addEventListener('pointermove', e => { cur = toGame(e); mouseIn = true; });
+cv.addEventListener('pointermove', e => { cur = toGame(e); mouseIn = true; if (edDown && mode === 'edit') edPaint(cur.x, cur.y); });
 cv.addEventListener('pointerleave', () => mouseIn = false);
-const up = () => { if (down){ down = false; endStroke(); } };
+const up = () => { edDown = false; if (down){ down = false; endStroke(); } };
 cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
 cv.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('pointerdown', e => { const m = $('menu'); if (m.style.display === 'flex' && !m.contains(e.target) && e.target !== $('menuBtn')) closeMenu(); });
 
 // dotykové ovládání
 (() => {
@@ -386,11 +781,11 @@ cv.addEventListener('contextmenu', e => e.preventDefault());
 // ---------- hlavní aktualizace ----------
 function update(dt){
   T += dt; gumWarn -= dt; shake = Math.max(0, shake - dt);
-  timeLeft -= dt;
+  timeLeft -= dt; elapsed += dt;
   if (timeLeft <= 0){
     hearts--; sfx(140, .4, 'sawtooth', .07);
     if (hearts <= 0){ gameOver(); return; }
-    toast('⏱ Čas vypršel! Level znovu  ❤ ' + hearts, 2.5); loadLevel(lvl); return;
+    toast('⏱ Čas vypršel! Level znovu  ❤ ' + hearts, 2.5); reload(); return;
   }
 
   // ovládání hráče
@@ -426,17 +821,26 @@ function update(dt){
     if (o.t === 'enemy'){
       const d = P.x - o.x;
       if (Math.abs(d) < o.aggro){ o.vx = Math.sign(d) * o.sp; o.face = Math.sign(d) || 1; } else o.vx = 0;
+      if (o.boss){
+        o.leapT -= dt;
+        if (o.leapT <= 0 && o.grounded && Math.abs(d) < 300){ o.vy = -520; o.leap = true; o.leapDir = Math.sign(d) || 1; o.leapT = 2.8; sfx(90, .2, 'sawtooth', .06); }
+        if (o.leap){ o.vx = o.leapDir * 210; if (o.grounded && o.leapT < 2.6){ o.leap = false; shake = .25; sfx(70, .25, 'sawtooth', .07); } }
+      }
       physics(o, dt, 12); stepOnFake(o);
-      if (o.y > VH + 80){ remove(o); continue; }
-      if (Math.abs(P.x - o.x) < (P.w + o.w) / 2 - 2 && P.y - P.h < o.y && P.y > o.y - o.h) hurt('Chytl tě nepřítel!');
+      if (o.y > VH + 80){
+        remove(o);
+        if (o.boss){ toast('Boss padl! 🎉', 3); sfx(880, .4, 'triangle', .06); for (let k = 0; k < 60; k++) parts.push({ x: o.x, y: 200, vx: (Math.random() - .5) * 500, vy: -Math.random() * 400, life: 1.2, col: ['#ffd23a', '#f2638f', '#2f7bf5', '#2fb86b'][k % 4], s: 5 }); }
+        continue;
+      }
+      if (Math.abs(P.x - o.x) < (P.w + o.w) / 2 - 2 && P.y - P.h < o.y && P.y > o.y - o.h) hurt(o.boss ? 'Boss tě chytil!' : 'Chytl tě nepřítel!');
     } else if (o.t === 'spike' || o.t === 'bomb'){
       if (cell(Math.floor(o.x / C), Math.floor((o.y + 1) / C)) === 0){ o.vy += 1500 * dt; o.y += o.vy * dt; if (o.y > VH + 60) remove(o); } else o.vy = 0;
       if (o.t === 'spike' && Math.abs(P.x - o.x) < P.w / 2 + 8 && P.y > o.y - 12 && P.y - P.h < o.y) hurt('Píchl ses o hroty!');
     } else {
       if (Math.hypot(P.x - o.x, P.y - 24 - o.y) < 26){
         if (o.t === 'key'){ keys++; remove(o); sfx(900, .1, 'triangle', .05); toast('🔑 Klíč ' + keys + '/5', 1); }
-        else if (o.t === 'heart'){ hearts = Math.min(15, hearts + 1); remove(o); sfx(700, .2, 'triangle', .05); toast('❤ Srdce navíc!', 1.2); }
-        else if (o.t === 'sharp'){ gum = Math.min(GUM_MAX, gum + 120); remove(o); sfx(600, .2, 'triangle', .05); toast('Ořezávátko! +120 % gumy 🧽', 1.5); }
+        else if (o.t === 'heart'){ hearts = Math.min(15, hearts + 1); remove(o); sfx(700, .2, 'triangle', .05); toast('❤️ Srdce navíc!', 1.2); }
+        else if (o.t === 'sharp'){ gum = Math.min(GUM_MAX, gum + 30); remove(o); sfx(600, .2, 'triangle', .05); toast('Ořezávátko! +30 % gumy 🧽', 1.5); }
       }
     }
   }
@@ -449,16 +853,17 @@ function update(dt){
 
   // dveře
   doorCD -= dt;
-  if (door && !bonus && doorCD <= 0 && Math.abs(P.x - door.x) < 26 && P.y > GT - 60){
+  const atDoor = d => d && Math.abs(P.x - d.x) < 26 && Math.abs(P.y - (d.y || GT)) < 50;
+  if (!bonus && doorCD <= 0 && atDoor(door)){
     if (keys >= 5) levelDone();
     else { doorCD = 99; panel('<h1>🚪 Zamčeno</h1><p>Máš jen ' + keys + ' z 5 klíčů.</p>',
       [{ label: 'Hrát dále a získat klíče', fn: () => { bonus = true; doorCD = 0; paused = false; timeLeft += 25;
         toast('Dveře zmizely! Jdi dál – za nimi jsou další klíče (+25 s)', 3.5); } }]); }
   }
-  if (bonus && door2 && Math.abs(P.x - door2.x) < 26 && P.y > GT - 60){
+  if (bonus && atDoor(door2)){
     if (keys >= 5) levelDone();
-    else { paused = true; panel('<h1>🚪 Poslední dveře</h1><p>Máš jen ' + keys + ' z 5 klíčů. Tady už je nutné je mít.</p>',
-      [{ label: '↻ Hrát znovu tento level', fn: () => loadLevel(lvl) }]); }
+    else { paused = true; panel('<h1>🚪 Poslední dveře</h1><p>Máš jen ' + keys + ' z 5 klíčů.</p>',
+      [{ label: '↻ Hrát znovu tento level', fn: reload }]); }
   }
 
   // guma (držím a táhnu)
@@ -497,7 +902,7 @@ function drawTerrain(){
     if (cell(cx, cy + 1) === 0 && cy < ROWS - 1){ ctx.fillStyle = '#0003'; ctx.fillRect(cx * C - ox, cy * C + C - 2, C, 2); }
   }
 }
-function outline(){ ctx.lineWidth = 2.5; ctx.strokeStyle = '#14183a'; ctx.lineJoin = 'round'; }
+function outline(c = ctx){ c.lineWidth = 2.5; c.strokeStyle = '#14183a'; c.lineJoin = 'round'; }
 function drawObj(o){
   const x = Math.round(o.x - camX);
   ctx.save(); outline();
@@ -523,7 +928,15 @@ function drawObj(o){
     ctx.translate(x, o.y + Math.sin(T * 3 + o.x) * 3); ctx.rotate(-.2);
     ctx.fillStyle = '#ff8fb3'; ctx.fillRect(-14, -9, 28, 18); ctx.strokeRect(-14, -9, 28, 18);
     ctx.fillStyle = '#fff'; ctx.fillRect(-14, -9, 9, 18); ctx.strokeRect(-14, -9, 9, 18);
-    ctx.font = 'bold 8px sans-serif'; ctx.fillStyle = '#14183a'; ctx.fillText('+120', -3, 3);
+    ctx.font = 'bold 8px sans-serif'; ctx.fillStyle = '#14183a'; ctx.fillText('+30', -3, 3);
+  } else if (o.t === 'enemy' && o.boss){
+    ctx.translate(x, o.y); const sq = Math.sin(T * 6) * 2;
+    ctx.fillStyle = '#7b3fc4'; ctx.beginPath(); ctx.ellipse(0, -45, 40, 45 - sq, 0, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#ffd23a'; ctx.beginPath(); ctx.moveTo(-22, -84); ctx.lineTo(-22, -100); ctx.lineTo(-11, -90); ctx.lineTo(0, -104); ctx.lineTo(11, -90); ctx.lineTo(22, -100); ctx.lineTo(22, -84); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#fff'; for (const ex of [-15, 15]){ ctx.beginPath(); ctx.arc(ex, -55, 11, 0, 7); ctx.fill(); ctx.stroke(); }
+    ctx.fillStyle = '#14183a'; for (const ex of [-15, 15]){ ctx.beginPath(); ctx.arc(ex + o.face * 4, -53, 5, 0, 7); ctx.fill(); }
+    ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(-28, -72); ctx.lineTo(-6, -64); ctx.moveTo(28, -72); ctx.lineTo(6, -64); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(-18, -26); ctx.lineTo(18, -26); ctx.lineTo(10, -14); ctx.lineTo(0, -22); ctx.lineTo(-10, -14); ctx.closePath(); ctx.fill(); ctx.stroke();
   } else if (o.t === 'enemy'){
     ctx.translate(x, o.y); const sq = Math.sin(T * 10 + o.x) * 1.5;
     ctx.fillStyle = '#e0455a'; ctx.beginPath(); ctx.ellipse(0, -13 + sq / 2, 15, 13 - sq, 0, 0, 7); ctx.fill(); ctx.stroke();
@@ -535,7 +948,7 @@ function drawObj(o){
 }
 function drawDoor(dr){
   const x = Math.round(dr.x - camX), open = keys >= 5;
-  ctx.save(); outline(); ctx.translate(x, GT);
+  ctx.save(); outline(); ctx.translate(x, dr.y || GT);
   ctx.fillStyle = open ? '#3ecf6b' : '#8a5a2b'; ctx.fillRect(-20, -72, 40, 72); ctx.strokeRect(-20, -72, 40, 72);
   ctx.fillStyle = open ? '#d9ffe6' : '#a56a33'; ctx.fillRect(-14, -66, 28, 60);
   ctx.fillStyle = '#ffcc1f'; ctx.beginPath(); ctx.arc(9, -34, 3.5, 0, 7); ctx.fill();
@@ -543,31 +956,37 @@ function drawDoor(dr){
   const t = '🔑 ' + keys + '/5'; ctx.strokeText(t, 0, -80); ctx.fillText(t, 0, -80);
   ctx.restore();
 }
-function drawPlayer(){
-  if (P.inv > 0 && Math.floor(P.inv * 12) % 2) return;
-  ctx.save(); ctx.translate(Math.round(P.x - camX), Math.round(P.y)); ctx.scale(P.face, 1); outline();
-  const moving = P.grounded && Math.abs(P.vx) > 1, wlk = moving ? Math.sin(T * 14) * 5 : 0, air = !P.grounded;
-  // nohy a boty
-  ctx.fillStyle = '#20304f';
-  ctx.fillRect(-9 + (air ? -3 : wlk), -16, 8, 12); ctx.strokeRect(-9 + (air ? -3 : wlk), -16, 8, 12);
-  ctx.fillRect(1 + (air ? 3 : -wlk), -16, 8, 12); ctx.strokeRect(1 + (air ? 3 : -wlk), -16, 8, 12);
-  ctx.fillStyle = '#111';
-  ctx.fillRect(-11 + (air ? -3 : wlk), -5, 12, 5); ctx.strokeRect(-11 + (air ? -3 : wlk), -5, 12, 5);
-  ctx.fillRect(1 + (air ? 3 : -wlk), -5, 12, 5); ctx.strokeRect(1 + (air ? 3 : -wlk), -5, 12, 5);
-  // tělo
-  ctx.fillStyle = '#2f7bf5'; ctx.beginPath(); ctx.roundRect(-12, -36, 24, 24, 5); ctx.fill(); ctx.stroke();
-  // ruce
-  const wave = Math.sin(T * 8) * 4;
-  const arm = (sx, ex, ey) => { ctx.fillStyle = '#2f7bf5'; ctx.beginPath(); ctx.moveTo(sx, -32); ctx.lineTo(ex, ey); ctx.lineWidth = 8; ctx.strokeStyle = '#14183a'; ctx.stroke();
-    ctx.lineWidth = 4.5; ctx.strokeStyle = '#2f7bf5'; ctx.stroke(); outline(); ctx.fillStyle = '#f2b27c'; ctx.beginPath(); ctx.arc(ex, ey, 4.5, 0, 7); ctx.fill(); ctx.stroke(); };
+// postavička (c = kreslicí plátno, počátek = chodidla)
+function drawChar(c, face, t, moving, air, col){
+  c.save(); c.scale(face, 1); outline(c);
+  const wlk = moving ? Math.sin(t * 14) * 5 : 0;
+  c.fillStyle = col.pants || '#20304f';
+  c.fillRect(-9 + (air ? -3 : wlk), -16, 8, 12); c.strokeRect(-9 + (air ? -3 : wlk), -16, 8, 12);
+  c.fillRect(1 + (air ? 3 : -wlk), -16, 8, 12); c.strokeRect(1 + (air ? 3 : -wlk), -16, 8, 12);
+  c.fillStyle = '#111';
+  c.fillRect(-11 + (air ? -3 : wlk), -5, 12, 5); c.strokeRect(-11 + (air ? -3 : wlk), -5, 12, 5);
+  c.fillRect(1 + (air ? 3 : -wlk), -5, 12, 5); c.strokeRect(1 + (air ? 3 : -wlk), -5, 12, 5);
+  c.fillStyle = col.shirt; c.beginPath(); c.roundRect(-12, -36, 24, 24, 5); c.fill(); c.stroke();
+  const wave = Math.sin(t * 8) * 4;
+  const arm = (sx, ex, ey) => { c.beginPath(); c.moveTo(sx, -32); c.lineTo(ex, ey); c.lineWidth = 8; c.strokeStyle = '#14183a'; c.stroke();
+    c.lineWidth = 4.5; c.strokeStyle = col.shirt; c.stroke(); outline(c); c.fillStyle = col.skin; c.beginPath(); c.arc(ex, ey, 4.5, 0, 7); c.fill(); c.stroke(); };
   if (!moving && !air) arm(12, 16 + wave, -50); else arm(12, 16 + (air ? 4 : -wlk), air ? -48 : -20);
   arm(-12, -15 + (moving ? wlk : 0), air ? -46 : -18);
-  // hlava
-  ctx.fillStyle = '#f2b27c'; ctx.beginPath(); ctx.arc(0, -44, 11, 0, 7); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = '#6b3f20'; ctx.beginPath(); ctx.arc(0, -44, 11.5, Math.PI * 1.02, Math.PI * 1.98); ctx.lineTo(8, -50); ctx.lineTo(-9, -48); ctx.closePath(); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = '#14183a'; ctx.beginPath(); ctx.arc(-2, -44, 1.6, 0, 7); ctx.arc(5, -44, 1.6, 0, 7); ctx.fill();
-  ctx.lineWidth = 1.8; ctx.beginPath(); ctx.arc(2, -42, 4.5, .2, Math.PI - .2); ctx.stroke();
-  ctx.restore();
+  c.fillStyle = col.skin; c.beginPath(); c.arc(0, -44, 11, 0, 7); c.fill(); c.stroke();
+  c.fillStyle = col.hair; c.beginPath(); c.arc(0, -44, 11.5, Math.PI * 1.02, Math.PI * 1.98); c.lineTo(8, -50); c.lineTo(-9, -48); c.closePath(); c.fill(); c.stroke();
+  c.fillStyle = '#14183a'; c.beginPath(); c.arc(-2, -44, 1.6, 0, 7); c.arc(5, -44, 1.6, 0, 7); c.fill();
+  c.lineWidth = 1.8; c.beginPath(); c.arc(2, -42, 4.5, .2, Math.PI - .2); c.stroke();
+  if (col.hat){                                              // čepice
+    outline(c); c.fillStyle = col.hat;
+    c.beginPath(); c.arc(0, -46, 12, Math.PI, 0); c.closePath(); c.fill(); c.stroke();
+    c.beginPath(); c.roundRect(2, -49, 16, 4.5, 2); c.fill(); c.stroke();
+  }
+  c.restore();
+}
+function drawPlayer(){
+  if (P.inv > 0 && Math.floor(P.inv * 12) % 2) return;
+  ctx.save(); ctx.translate(Math.round(P.x - camX), Math.round(P.y));
+  drawChar(ctx, P.face, T, P.grounded && Math.abs(P.vx) > 1, !P.grounded, prog.char); ctx.restore();
 }
 function render(){
   ctx.save();
@@ -577,7 +996,6 @@ function render(){
   if (door2) drawDoor(door2);
   objs.forEach(drawObj); drawPlayer();
   for (const p of parts){ ctx.globalAlpha = Math.min(1, p.life * 2); ctx.fillStyle = p.col; ctx.fillRect(p.x - camX, p.y, p.s, p.s); } ctx.globalAlpha = 1;
-  // guma (kurzor)
   if (!paused && ((mouseIn && !touchBrush) || down)){
     ctx.beginPath(); ctx.arc(cur.x, cur.y, R, 0, 7); ctx.fillStyle = down ? 'rgba(255,150,190,.55)' : 'rgba(255,150,190,.25)'; ctx.fill();
     ctx.lineWidth = 2.5; ctx.strokeStyle = '#fff'; ctx.stroke();
@@ -585,8 +1003,8 @@ function render(){
   ctx.restore();
 }
 function hud(){
-  $('hearts').textContent = '❤'.repeat(Math.min(hearts, 15)) + ' ' + hearts;
-  $('lvl').textContent = LEVELS[lvl - 1].name;
+  $('hearts').textContent = '❤️'.repeat(Math.min(hearts, 15)) + ' ' + hearts;
+  $('lvl').textContent = mode === 'test' ? 'Zkouška' : 'Level ' + lvl;
   const tl = Math.max(0, Math.ceil(timeLeft)); const te = $('time'); te.textContent = '⏱ ' + tl; te.style.color = tl <= 10 ? '#ff7070' : '#fff';
   $('keysH').textContent = '🔑 ' + keys + ' / 5';
   $('gumfill').style.width = (gum / GUM_MAX * 100) + '%'; $('gumtxt').textContent = Math.round(gum) + ' %';
@@ -596,11 +1014,14 @@ function hud(){
 let last = performance.now();
 function loop(now){
   const dt = Math.min(.04, (now - last) / 1000); last = now;
-  if (!paused){ update(dt); }
-  if (g){ render(); if (P) hud(); } else { drawBg(); }
+  if (mode === 'edit' && ed){ edScroll(dt); renderEditor(); }
+  else {
+    if (!paused && g) update(dt);
+    if (g){ render(); if (P) hud(); } else drawBg();
+  }
   requestAnimationFrame(loop);
 }
-fit(); startPanel(); requestAnimationFrame(loop);
+fit(); startPanel(); silentLogin(); requestAnimationFrame(loop);
 </script>
 </body>
 </html>
