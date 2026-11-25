@@ -552,7 +552,9 @@ function charPanel(){
 function levelsPanel(){
   panel('<h1>Vlastní level</h1><p>Nakresli level a pošli ho spolužákům. Objeví se jim ve hře.</p>');
   const p = $('panel');
-  btn(p, '＋ Nový level', () => { closePanel(); openEditor(null); });
+  const dr = loadDraft();
+  if (dr) btn(p, '↩ Rozdělaný level', () => { closePanel(); openEditor(dr); });
+  btn(p, '＋ Nový level', () => { if (dr && !confirm('Rozdělaný level se zahodí. Opravdu nový?')) return; store.del(draftKey()); closePanel(); openEditor(null); }, !!dr);
   customLevels.filter(c => c.author === user.nick).forEach(c => {
     const it = el('div', { className: 'item' }, p);
     const e = el('button', { className: 'btn alt sm', textContent: '✏ ' + c.name }, it); e.onclick = () => { closePanel(); openEditor(c); };
@@ -583,9 +585,14 @@ function openEditor(c){
   el('button', { className: 'wide', textContent: '✕' }, bar).onclick = () => { if (confirm('Zahodit úpravy?')) leaveEditor(); };
   setMode('edit'); paused = true; closePanel();
 }
-function leaveEditor(){ ed = null; setMode('menu'); startPanel(); }
+function leaveEditor(){ store.del(draftKey()); ed = null; setMode('menu'); startPanel(); }
 const isStartCell = (gx, gy) => (gx === 1 || gx === 2) && gy >= 11;      // jen tam, kde stojí panáček
-function edPaint(sx, sy){
+// rozdělaný level se průběžně ukládá do prohlížeče (nic se neztratí ani po obnovení stránky)
+const draftKey = () => 'mazec_draft_' + (user ? user.nick : '');
+function loadDraft(){ try{ return JSON.parse(store.get(draftKey())); }catch(e){ return null; } }
+function saveDraft(){ if (user && ed) store.set(draftKey(), JSON.stringify({ id: ed.id, name: ed.name, map: ed.map.map(r => r.join('')), objs: ed.objs, created: ed.created })); }
+function edPaint(sx, sy){ edPaintRaw(sx, sy); saveDraft(); }
+function edPaintRaw(sx, sy){
   const gx = Math.floor((sx + ed.cam) / TILE), gy = Math.floor(sy / TILE);
   if (gx < 0 || gx >= ED_COLS || gy < 2 || gy >= ED_ROWS) return;
   if (isStartCell(gx, gy)){ toast('Tady začíná panáček 🧍 – tohle místo se nemění', 1.5); return; }
@@ -608,7 +615,7 @@ function trySave(){
   panel('<h1>Název levelu</h1>');
   const p = $('panel'), n = el('input', { placeholder: 'název', maxLength: 24, value: ed.name }, p);
   const row = el('div', { className: 'row' }, p);
-  btn(row, 'Uložit', () => { const nm = n.value.trim() || 'Můj level'; ed.name = nm; saveCustom(); });
+  btn(row, 'Uložit', () => { const nm = n.value.trim() || 'Můj level'; ed.name = nm; saveDraft(); saveCustom(); });
   btn(row, 'Zpět', () => { closePanel(); });
   n.onkeydown = e => { if (e.key === 'Enter') { ed.name = n.value.trim() || 'Můj level'; saveCustom(); } };
   n.focus();
@@ -621,7 +628,7 @@ async function saveCustom(){
   else { toast('Uložení se nepovedlo, zkus to znovu', 2.5); return; }
   data.created = data.created || Date.now();
   const i = customLevels.findIndex(c => c.id === data.id); if (i >= 0) customLevels[i] = data; else customLevels.push(data);
-  cacheLevels(); ed = null; setMode('menu'); hearts = 10;
+  cacheLevels(); store.del(draftKey()); ed = null; setMode('menu'); hearts = 10;
   panel('<h1>💾 Uloženo</h1><p>Tvůj level je ve hře.</p>', [{ label: 'OK', fn: () => playLevel(prog.reached) }]);
   refreshLevels();
 }
