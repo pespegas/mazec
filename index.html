@@ -25,7 +25,9 @@
   #toast{position:absolute;left:50%;top:16%;transform:translateX(-50%);padding:calc(6*var(--u)) calc(14*var(--u));
          background:#000a;color:#fff;border-radius:calc(10*var(--u));font-size:max(10px,calc(14*var(--u)));font-weight:700;
          text-align:center;opacity:0;transition:opacity .25s;pointer-events:none;width:max-content;max-width:78%;line-height:1.35;z-index:3}
-  #panel{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:6;
+  #panel>*{zoom:var(--ps,1)}                                                        /* na malé obrazovce se obsah panelu automaticky zmenší, aby se vešel */
+  #panel>:first-child{margin-top:auto} #panel>:last-child{margin-bottom:auto}      /* na výšku se vycentruje, ale když se nevejde, jde posunout od začátku */
+  #panel{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:flex-start;z-index:6;
          background:rgba(10,14,30,.86);color:#fff;text-align:center;padding:calc(16*var(--u));box-sizing:border-box;overflow:auto}
   #panel h1{font-size:max(16px,calc(28*var(--u)));margin:0 0 calc(6*var(--u))}
   #panel p{font-size:max(11px,calc(15*var(--u)));line-height:1.4;margin:calc(4*var(--u)) 0;max-width:80%}
@@ -71,6 +73,21 @@
   #editor button.on{border-color:#f2638f;background:#f2638f44}
   #editor .sep{flex:1}
   #editor button.wide{width:auto;padding:0 calc(10*var(--u));font-size:max(11px,calc(14*var(--u)));font-weight:700}
+  html,body{overscroll-behavior:none}
+  @supports (height:100dvh){ html,body{height:100dvh} #wrap{width:min(100vw,200dvh)} }     /* skutečná viditelná výška na telefonu (bez lišty prohlížeče) */
+  #panel{touch-action:pan-y}
+  .touch #menuBtn{width:max(44px,calc(34*var(--u)));height:max(36px,calc(30*var(--u)));font-size:20px}
+  .touch #panel .sw{width:max(30px,calc(26*var(--u)));height:max(30px,calc(26*var(--u)))}
+  .touch #panel .tabs button,.touch #panel .btn.sm{padding:max(7px,calc(6*var(--u))) max(10px,calc(10*var(--u)));font-size:max(12px,calc(13*var(--u)))}
+  .touch .btn{min-height:42px}
+  .touch #joy{width:max(140px,calc(170*var(--u)));height:max(88px,calc(104*var(--u)));bottom:calc(14*var(--u));left:calc(14*var(--u));
+       border-radius:999px;background:#ffffff1c}
+  .touch #knob{width:max(46px,calc(56*var(--u)));height:max(46px,calc(56*var(--u)));margin:0;transform:translate(-50%,-50%);background:#ffffffb0}
+  #menuBtn{font-size:0 !important;position:relative}
+  #menuBtn::before{content:'';position:absolute;left:50%;top:50%;width:46%;height:2px;margin:-1px 0 0 -23%;background:#fff;
+       border-radius:2px;box-shadow:0 -6px 0 #fff,0 6px 0 #fff}
+  .touch #editor{min-height:50px}
+  .touch #editor button{min-width:42px;min-height:42px}
   #rot{display:none;position:fixed;inset:0;background:#10131c;color:#fff;z-index:9;align-items:center;justify-content:center;
        text-align:center;font-size:20px;padding:30px}
   @media (orientation:portrait) and (pointer:coarse){ #rot{display:flex} }
@@ -81,10 +98,12 @@
        border-radius:calc(60*var(--u));background:#ffffff22;border:2px solid #fff6;touch-action:none}
   #knob{position:absolute;left:50%;top:50%;width:calc(54*var(--u));height:calc(54*var(--u));margin:calc(-27*var(--u));
         border-radius:50%;background:#fffa;pointer-events:none}
-  .tb{position:absolute;bottom:calc(24*var(--u));width:calc(84*var(--u));height:calc(84*var(--u));border-radius:50%;
-      background:#2f7bf5cc;border:3px solid #fff;color:#fff;font-size:calc(40*var(--u));text-align:center;
-      line-height:calc(80*var(--u));font-weight:700;touch-action:none}
-  #bJump{right:calc(20*var(--u))} #bLeap{right:calc(120*var(--u));background:#f29a2fcc}
+  .tb{position:absolute;bottom:calc(14*var(--u));width:max(56px,calc(80*var(--u)));height:max(56px,calc(80*var(--u)));border-radius:50%;
+      background:#2f7bf599;border:3px solid #ffffffcc;color:#fff;font-size:max(26px,calc(38*var(--u)));text-align:center;
+      display:flex;align-items:center;justify-content:center;font-weight:700;touch-action:none;user-select:none}
+  .tb.on{background:#f2638fcc}
+  #bL{left:calc(14*var(--u))} #bR{left:max(76px,calc(104*var(--u)))}
+  #bJump{right:calc(14*var(--u))} #bLeap{right:max(76px,calc(104*var(--u)));background:#f29a2f99}
 </style>
 </head>
 <body>
@@ -486,8 +505,18 @@ function btn(parent, label, fn, alt){ const b = el('button', { className: 'btn' 
 function panel(html, btns){
   paused = true; closeMenu(); const p = $('panel'); p.innerHTML = html;
   (btns || []).forEach(b => { const e = btn(p, b.label, () => { p.style.display = 'none'; b.fn(); }, b.alt); });
-  p.style.display = 'flex';
+  p.style.display = 'flex'; queueFit();
 }
+function fitPanel(){
+  const p = $('panel'); if (p.style.display !== 'flex') return;
+  p.style.setProperty('--ps', 1);
+  const need = [...p.children].reduce((s, c) => s + (c.style.position === 'absolute' ? 0 : c.offsetHeight + 10), 0);
+  const cs = getComputedStyle(p), avail = p.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  p.style.setProperty('--ps', Math.max(.4, Math.min(1, avail / Math.max(1, need))).toFixed(3));
+}
+let fitQ = 0; const queueFit = () => { cancelAnimationFrame(fitQ); fitQ = requestAnimationFrame(fitPanel); };
+new MutationObserver(queueFit).observe($('panel'), { childList: true, subtree: true });
+addEventListener('resize', queueFit);
 const closePanel = () => { $('panel').style.display = 'none'; };
 const panelOpen = () => $('panel').style.display === 'flex';
 
@@ -558,10 +587,10 @@ const PARTS = [['🧢 Čepice', 'hat'], ['👕 Tričko', 'shirt'], ['👖 Kalhot
 function charPanel(){
   panel('<h1>Postavička</h1>');
   const p = $('panel'), mid = el('div', { className: 'row' }, p); mid.style.cssText = 'align-items:center;flex-wrap:nowrap;gap:calc(20*var(--u))';
-  const prev = el('canvas', { width: 120, height: 130 }, mid); prev.style.cssText = 'width:calc(80*var(--u));min-width:56px;position:static;cursor:default';
+  const prev = el('canvas', { width: 120, height: 130 }, mid); prev.style.cssText = 'position:static;width:auto;height:max(80px,calc(100*var(--u)));cursor:default;flex:none';
   const side = el('div', {}, mid);
   const tabs = el('div', { className: 'row' }, side), pal = el('div', { className: 'row' }, side);
-  pal.style.maxWidth = 'calc(330*var(--u))'; let part = 'hat';
+  pal.style.maxWidth = 'max(270px,calc(400*var(--u)))'; let part = 'hat';
   const draw = () => { const c2 = prev.getContext('2d'); c2.clearRect(0, 0, 120, 130); c2.save(); c2.translate(60, 120); c2.scale(1.9, 1.9);
     drawChar(c2, 1, 0, false, false, prog.char); c2.restore(); };
   const showPal = () => {
@@ -842,16 +871,20 @@ document.addEventListener('pointerdown', e => { const m = $('menu'); if (m.style
 
 // dotykové ovládání
 (() => {
+  // joystick: táhni prstem doleva / doprava (čím dál, tím rychleji)
   const joy = $('joy'), knob = $('knob'); let jid = null;
-  const setJ = e => { const r = joy.getBoundingClientRect(); let v = ((e.clientX - r.left) / r.width - .5) * 2.2;
-    v = Math.max(-1, Math.min(1, v)); joyX = Math.abs(v) < .25 ? 0 : Math.sign(v);
-    knob.style.left = (50 + v * 35) + '%'; };
-  joy.addEventListener('pointerdown', e => { jid = e.pointerId; joy.setPointerCapture(jid); setJ(e); });
+  const setJ = e => {
+    const r = joy.getBoundingClientRect(); const v = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width - .5) * 2.4));
+    const a = Math.abs(v); joyX = a < .18 ? 0 : Math.sign(v) * Math.min(1, .45 + (a - .18) * 1.1);
+    knob.style.left = (50 + v * 36) + '%';
+  };
+  joy.addEventListener('pointerdown', e => { e.preventDefault(); jid = e.pointerId; try{ joy.setPointerCapture(jid); }catch(err){} setJ(e); audio(); });
   joy.addEventListener('pointermove', e => { if (e.pointerId === jid) setJ(e); });
   const rel = e => { if (e.pointerId === jid){ jid = null; joyX = 0; knob.style.left = '50%'; } };
-  joy.addEventListener('pointerup', rel); joy.addEventListener('pointercancel', rel);
-  $('bJump').addEventListener('pointerdown', () => jumpReq = true);
-  $('bLeap').addEventListener('pointerdown', () => leapReq = true);
+  joy.addEventListener('pointerup', rel); joy.addEventListener('pointercancel', rel); joy.addEventListener('lostpointercapture', rel);
+  const tap = (id, fn) => $(id).addEventListener('pointerdown', e => { e.preventDefault(); fn(); audio(); });
+  tap('bJump', () => jumpReq = true);
+  tap('bLeap', () => leapReq = true);
 })();
 
 // ---------- hlavní aktualizace ----------
