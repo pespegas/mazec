@@ -49,6 +49,13 @@
         border-radius:50%;animation:sp .7s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
   .btn:disabled{opacity:.85;cursor:default}
+  #panel .board{max-height:calc(200*var(--u));min-height:calc(40*var(--u));overflow-y:auto;width:min(calc(420*var(--u)),92%);margin-bottom:calc(6*var(--u));
+       font-size:max(11px,calc(13*var(--u)));touch-action:pan-y}
+  #panel .board table{width:100%;border-collapse:collapse}
+  #panel .board th{opacity:.7;font-weight:600;text-align:left;padding:calc(3*var(--u)) calc(6*var(--u))}
+  #panel .board td{padding:calc(4*var(--u)) calc(6*var(--u));text-align:left;border-top:1px solid #ffffff22}
+  #panel .board td:first-child,#panel .board th:first-child{width:2.2em;text-align:center}
+  #panel .board tr.me td{background:#f2638f55;font-weight:700}
   #panel .err{color:#ff9a9a;font-size:max(10px,calc(13*var(--u)));min-height:1.2em}
   #panel .row{display:flex;flex-wrap:wrap;justify-content:center;gap:calc(4*var(--u))}
   #panel .item{display:flex;align-items:center;gap:calc(6*var(--u));margin:calc(3*var(--u))}
@@ -142,6 +149,7 @@ const store = {
 
 const VW = 900, VH = 450, C = 6, ROWS = VH / C, GT = 390, TILE = 30, ED_COLS = 80, ED_ROWS = 15;
 const R = 20, COST = 0.14, GUM_MAX = 100;
+const REGEN_CAP = 25, REGEN_RATE = 1.2, KEY_BONUS = 3, FALL_BONUS = 5;     // guma se sama dobíjí jen do 25 % (1,2 % za vteřinu); klíč +3 %, nepřítel v díře +5 %
 const $ = id => document.getElementById(id);
 const cv = $('c'), ctx = cv.getContext('2d'), wrap = $('wrap');
 const esc = s => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -534,6 +542,7 @@ function openMenu(){
   if (mode === 'test') add('⬅ Zpět do editoru', backToEditor);
   else {
     add('▶ Hrát', () => { if (lvl === prog.reached && curDef) paused = false; else playLevel(prog.reached); });
+    add('🏆 Žebříček', () => boardPanel());
     add('✏ Vlastní level', levelsPanel);
     add('🙂 Postavička', charPanel);
     add(muted ? '🔇 Zvuk: vypnuto' : '🔊 Zvuk: zapnuto', () => { toggleMute(); paused = false; });
@@ -579,6 +588,37 @@ function authPanel(tab = store.get('mazec_seen') ? 'login' : 'register', keep = 
   fields.forEach((inp, i) => inp.onkeydown = e => { if (e.key === 'Enter'){ if (i < fields.length - 1) fields[i + 1].focus(); else submit(); } });
 }
 function logout(){ user = null; store.del('mazec_user'); g = null; P = null; startPanel(); }
+
+// žebříček (data se stahují potichu na pozadí, hned se ukáže to, co už hra zná)
+let boardData = null; try{ boardData = JSON.parse(store.get('mazec_board')); }catch(e){}
+function fmtTime(s){ s = Math.round(s * 10) / 10; if (s < 60) return s.toFixed(1).replace('.', ',') + ' s'; const m = Math.floor(s / 60); return m + ':' + (s - m * 60).toFixed(1).replace('.', ',').padStart(4, '0'); }
+function boardRows(tab){
+  const list = (boardData || []).filter(r => !user || String(r.nick).toLowerCase() !== user.nick.toLowerCase());
+  if (user){ const vals = Object.values(prog.best || {}).map(Number).filter(x => x > 0);
+    if (vals.length) list.push({ nick: user.nick, count: vals.length, total: vals.reduce((a, c) => a + c, 0), me: true }); }   // moje čísla jsou vždy aktuální
+  list.sort(tab === 'time' ? (a, b) => a.total / a.count - b.total / b.count || b.count - a.count : (a, b) => b.count - a.count || a.total - b.total);
+  return list;
+}
+function boardPanel(tab = 'time'){
+  panel('<h1>🏆 Žebříček</h1>');
+  const p = $('panel'), tabs = el('div', { className: 'tabs' }, p);
+  [['time', 'Nejrychlejší'], ['levels', 'Nejvíc levelů']].forEach(([k, label]) => {
+    const b = el('button', { textContent: label, className: k === tab ? 'on' : '' }, tabs); b.onclick = () => boardPanel(k); });
+  el('div', { className: 'hint', textContent: tab === 'time' ? 'Podle průměrného času na jeden level.' : 'Kdo dohrál nejvíc levelů.' }, p);
+  const box = el('div', { className: 'board' }, p);
+  const draw = () => {
+    box.innerHTML = ''; const rows = boardRows(tab);
+    if (!rows.length){ box.textContent = 'Zatím tu nikdo není. Dohraj level!'; return; }
+    const t = el('table', {}, box); t.innerHTML = '<tr><th>#</th><th>Přezdívka</th><th>Rekord</th><th>Levely</th></tr>';
+    const add = (r, i) => { const tr = el('tr', { className: r.me ? 'me' : '' }, t);
+      tr.innerHTML = '<td>' + (['🥇', '🥈', '🥉'][i] || (i + 1)) + '</td><td>' + esc(r.nick) + '</td><td>' + fmtTime(r.total) + '</td><td>' + r.count + '</td>'; };
+    rows.slice(0, 15).forEach(add);
+    const mi = rows.findIndex(r => r.me);
+    if (mi >= 15){ el('tr', { innerHTML: '<td colspan="4">…</td>' }, t); add(rows[mi], mi); }
+  };
+  draw(); btn(p, 'Zpět', () => { closePanel(); paused = false; });
+  apiGet('action=board').then(r => { if (r && r.ok){ boardData = r.board; store.set('mazec_board', JSON.stringify(boardData)); if (box.isConnected) draw(); } });
+}
 
 // postavička
 const COLORS = ['#2f7bf5', '#e0455a', '#2fb86b', '#f2c230', '#a05be0', '#ff7ab6', '#2b3240', '#f5f5f5',
@@ -811,7 +851,7 @@ function objCost(){
   if (stroke.n >= 2){ gum = Math.min(GUM_MAX, gum + 10); toast('KOMBO! +10 % gumy 🧽', 1.2); sfx(900, .15); }
 }
 function stamp(wx, wy){
-  if (gum <= 0){ if (gumWarn <= 0){ toast('Došla guma! Najdi ořezávátko 🧽', 2); gumWarn = 3; } return; }
+  if (gum <= 0){ if (gumWarn <= 0){ toast('Guma došla – chvíli počkej, pomalu se dobíjí 🧽', 2.5); gumWarn = 3; } return; }
   const cr = Math.ceil(R / C), cx0 = Math.floor(wx / C), cy0 = Math.floor(wy / C); let n = 0;
   for (let dy = -cr; dy <= cr; dy++) for (let dx = -cr; dx <= cr; dx++){
     const cx = cx0 + dx, cy = cy0 + dy;
@@ -891,6 +931,7 @@ document.addEventListener('pointerdown', e => { const m = $('menu'); if (m.style
 function update(dt){
   T += dt; gumWarn -= dt; shake = Math.max(0, shake - dt);
   timeLeft -= dt; elapsed += dt;
+  if (!down && gum < REGEN_CAP) gum = Math.min(REGEN_CAP, gum + REGEN_RATE * dt);      // pomalé dobíjení, když zrovna nemažeš
   if (timeLeft <= 0){
     hearts--; sfx(140, .4, 'sawtooth', .07);
     if (hearts <= 0){ gameOver(); return; }
@@ -938,6 +979,7 @@ function update(dt){
       physics(o, dt, 12); stepOnFake(o);
       if (o.y > VH + 80){
         remove(o);
+        if (!o.boss){ gum = Math.min(GUM_MAX, gum + FALL_BONUS); toast('Nepřítel spadl! +' + FALL_BONUS + ' % gumy 🧽', 1.2); sfx(700, .12, 'triangle', .04); }
         if (o.boss){ toast('Boss padl! 🎉', 3); sfx(880, .4, 'triangle', .06); for (let k = 0; k < 60; k++) parts.push({ x: o.x, y: 200, vx: (Math.random() - .5) * 500, vy: -Math.random() * 400, life: 1.2, col: ['#ffd23a', '#f2638f', '#2f7bf5', '#2fb86b'][k % 4], s: 5 }); }
         continue;
       }
@@ -947,7 +989,7 @@ function update(dt){
       if (o.t === 'spike' && Math.abs(P.x - o.x) < P.w / 2 + 8 && P.y > o.y - 12 && P.y - P.h < o.y) hurt('Píchl ses o hroty!');
     } else {
       if (Math.hypot(P.x - o.x, P.y - 24 - o.y) < 26){
-        if (o.t === 'key'){ keys++; remove(o); sfx(900, .1, 'triangle', .05); toast('🔑 Klíč ' + keys + '/5', 1); }
+        if (o.t === 'key'){ keys++; remove(o); gum = Math.min(GUM_MAX, gum + KEY_BONUS); sfx(900, .1, 'triangle', .05); toast('🔑 Klíč ' + keys + '/5  +' + KEY_BONUS + ' % gumy', 1.2); }
         else if (o.t === 'heart'){ hearts = Math.min(15, hearts + 1); remove(o); sfx(700, .2, 'triangle', .05); toast('❤️ Srdce navíc!', 1.2); }
         else if (o.t === 'sharp'){ gum = Math.min(GUM_MAX, gum + 30); remove(o); sfx(600, .2, 'triangle', .05); toast('Ořezávátko! +30 % gumy 🧽', 1.5); }
       }
